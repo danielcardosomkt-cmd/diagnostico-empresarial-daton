@@ -1,0 +1,1208 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Diagnóstico Empresarial — daton.os</title>
+  <style>
+    :root{
+      --bg:#F8FAFC; --card:#FFFFFF; --line:#E5E7EB;
+      --text:#111111; --muted:#374151;
+      --primary:#2563EB; --primary-soft:#DBEAFE;
+      --danger:#DC2626; --warn:#F59E0B; --ok:#2563EB; --good:#16A34A;
+      --shadow: 0 10px 24px rgba(17,24,39,.08);
+      --radius: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:var(--sans);color:var(--text);background:linear-gradient(180deg,#fff 0%,var(--bg) 100%)}
+    .app{display:grid;grid-template-columns:320px 1fr;min-height:100vh}
+    aside{position:sticky;top:0;height:100vh;background:var(--bg);border-right:1px solid var(--line);padding:18px 16px;overflow:auto}
+    main{padding:22px 22px 60px}
+    .brand{display:flex;align-items:center;gap:10px;padding:10px 10px 14px;border-bottom:1px solid var(--line);margin-bottom:14px}
+    .brand img{width:110px;height:auto;display:block}
+    .brand .tag{font-size:12px;color:var(--muted);padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#fff}
+    .nav h3{margin:14px 10px 8px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+    .nav button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;margin:6px 0;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;transition:.15s;text-align:left}
+    .nav button:hover{border-color:#cbd5e1;transform:translateY(-1px)}
+    .nav button.active{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12);background:linear-gradient(180deg,#fff 0%,rgba(37,99,235,.04) 100%)}
+    .pill{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:#fff;white-space:nowrap}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}
+    .title h1{font-size:18px;margin:0}
+    .title p{margin:4px 0 0;color:var(--muted);font-size:13px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+    .select,.toggle{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--line);background:#fff;border-radius:12px;font-size:13px;color:var(--muted)}
+    select,input[type="text"],input[type="password"],textarea{font:inherit;border:1px solid var(--line);border-radius:12px;padding:10px 12px;outline:none;background:#fff}
+    select:focus,input:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+    .btn{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;cursor:pointer;transition:.15s;font-weight:600}
+    .btn:hover{transform:translateY(-1px);border-color:#cbd5e1}
+    .btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+    .grid{display:grid;grid-template-columns:1.4fr .6fr;gap:16px;align-items:start}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+    .card h2{margin:0 0 6px;font-size:15px}
+    .card p{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.4}
+    .hr{height:1px;background:var(--line);margin:14px 0}
+    .small{font-size:12px;color:var(--muted)}
+    .q{border-top:1px dashed var(--line);padding-top:14px;margin-top:14px}
+    .q:first-of-type{border-top:none;padding-top:0;margin-top:0}
+    .qtitle{font-weight:800;font-size:14px;line-height:1.35;margin:0}
+    .hint{font-size:12px;color:var(--muted);margin-top:8px}
+    textarea{width:100%;min-height:90px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    .field label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+    .radioGroup{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .radioBtn{border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;background:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;user-select:none;text-align:center}
+    .radioBtn.active{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12);background:linear-gradient(180deg,#fff 0%,rgba(37,99,235,.05) 100%);font-weight:800}
+    .checkRow{display:flex;gap:10px;flex-wrap:wrap}
+    .check{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:#fff;font-size:13px;color:var(--muted)}
+    .stat{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin-top:10px;background:#fff;gap:10px}
+    .kpi{font-weight:900}
+    .muted{color:var(--muted)}
+    .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 14px 30px rgba(0,0,0,.18);font-size:13px;opacity:0;transform:translateY(6px);transition:.18s;max-width:420px;z-index:9999}
+    .toast.show{opacity:1;transform:translateY(0)}
+    @media (max-width:980px){.app{grid-template-columns:1fr}aside{position:relative;height:auto}.grid{grid-template-columns:1fr}.radioGroup{grid-template-columns:1fr 1fr}}
+    .adminTag{font-family:var(--mono);font-size:11px;border:1px solid var(--line);padding:4px 8px;border-radius:999px;background:#fff;color:var(--muted)}
+    .danger{color:#fff;background:var(--danger);border-color:var(--danger)}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">
+      <img alt="daton.os" src="https://www.genspark.ai/api/files/s/GrP2M92N" />
+      <span class="tag" id="modeTag">Diagnóstico</span>
+    </div>
+
+    <div class="nav">
+      <h3>Modo</h3>
+      <button class="btn" onclick="setMode('diagnostico')">
+        <div><div style="font-weight:900">Diagnóstico</div><div class="small">Responder e gerar relatório</div></div>
+        <span class="pill">run</span>
+      </button>
+      <button class="btn" onclick="setMode('admin')">
+        <div><div style="font-weight:900">Admin</div><div class="small">Editar perguntas</div></div>
+        <span class="pill">edit</span>
+      </button>
+
+      <div class="hr"></div>
+
+      <h3>Seções</h3>
+      <div id="nav"></div>
+
+      <div class="hr"></div>
+
+      <h3>Exportação</h3>
+      <button class="btn" onclick="exportAnswers()">Baixar respostas (JSON)</button>
+      <button class="btn" onclick="exportQuestions()">Baixar perguntas (JSON)</button>
+      <button class="btn" onclick="openReport()">Abrir relatório (impressão)</button>
+
+      <div class="hr"></div>
+      <div class="small">
+        Dica Admin: use “Importar JSON” para colar seu banco completo de perguntas.
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div class="title">
+        <h1 id="pageTitle">Cadastro</h1>
+        <p id="pageSubtitle">Preencha os dados mínimos antes de iniciar o diagnóstico.</p>
+      </div>
+
+      <div class="actions" id="topActions">
+        <div class="select">
+          <span>IA:</span>
+          <select id="aiProvider">
+            <option value="openai">OpenAI (GPT)</option>
+            <option value="gemini">Gemini</option>
+          </select>
+        </div>
+        <label class="toggle">
+          <input id="privacyMode" type="checkbox" checked />
+          <span>Privacidade ON</span>
+        </label>
+        <button class="btn" onclick="openConfig()">Configurar IA</button>
+        <button class="btn primary" onclick="generateInsights()">Gerar insights</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card" id="content"></div>
+
+      <div class="card" id="sideCard">
+        <h2>Status</h2>
+        <p>Progresso do diagnóstico e atalhos.</p>
+
+        <div class="stat">
+          <div><div class="muted" style="font-size:12px;">Respondidas</div><div class="kpi" id="kpiAnswered">0</div></div>
+          <div><div class="muted" style="font-size:12px;">Total</div><div class="kpi" id="kpiTotal">0</div></div>
+        </div>
+
+        <div class="stat">
+          <div><div class="muted" style="font-size:12px;">Crítico</div><div class="kpi" id="kpiCritical">0</div></div>
+          <div class="adminTag" id="kpiMaturity">—</div>
+        </div>
+
+        <div class="hr"></div>
+
+        <button class="btn" onclick="applySuggestions()">Aplicar sugestões (Oportunidades + Ações)</button>
+        <button class="btn danger" onclick="resetAll()">Reset diagnóstico</button>
+
+        <div class="hr"></div>
+        <div class="small" id="sideHint">Preencha pelo menos 60% para insights melhores.</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/** =========================
+ *  0) PERGUNTAS (EDITÁVEL NO ADMIN)
+ *  - Persistência: LocalStorage
+ *  ========================= */
+const STORAGE_KEYS = {
+  QUESTIONS: "daton_diag_questions_v1",
+  ANSWERS: "daton_diag_answers_v1",
+  CONFIG: "daton_diag_config_v1",
+  ADMIN_PIN: "daton_diag_admin_pin_v1"
+};
+
+const DEFAULT_DIAG = {
+  brand: { name: "daton.os", logoUrl: "https://www.genspark.ai/api/files/s/GrP2M92N" },
+  scale: [
+    { key:"CRITICO", label:"Crítico", color:"#DC2626", score: 0 },
+    { key:"DESENV", label:"Em desenvolvimento", color:"#F59E0B", score: 33 },
+    { key:"ADEQ",   label:"Adequado", color:"#2563EB", score: 66 },
+    { key:"MADURO", label:"Maduro", color:"#16A34A", score: 100 },
+  ],
+  importance: ["Baixa","Média","Alta"],
+  deficiencies: ["Técnica","Comportamental","Ferramental"],
+  sections: [
+    { id:"cadastro", title:"Cadastro", subtitle:"Dados básicos do diagnóstico.", type:"form",
+      fields:[
+        {id:"empresa_nome", label:"Nome da empresa", placeholder:"Ex.: Empresa X"},
+        {id:"segmento", label:"Segmento", placeholder:"Ex.: Serviços / Indústria / Varejo"},
+        {id:"cidade_uf", label:"Cidade/UF", placeholder:"Ex.: São Paulo/SP"},
+        {id:"contato", label:"Contato (opcional)", placeholder:"Ex.: nome/e-mail (será mascarado)"},
+        {id:"logo_cliente_url", label:"Logo do cliente (URL)", placeholder:"Link público PNG/JPG"},
+      ]
+    },
+
+    // Estrutura por áreas FNQ (placeholders — você ajusta no Admin)
+    mkArea("lideranca","Liderança","Governança, liderança e análise de desempenho.",[
+      mkBlock("gov","Governança Corporativa",[
+        mkQ("LID-GOV-01","Existe clareza sobre papéis e responsabilidades de liderança e decisão?"),
+        mkQ("LID-GOV-02","A empresa possui rituais de governança (reuniões, indicadores, decisões registradas)?"),
+      ]),
+      mkBlock("exer","Exercício da Liderança",[
+        mkQ("LID-EXE-01","A liderança reforça cultura, valores e padrões de qualidade de forma consistente?"),
+        mkQ("LID-EXE-02","Líderes são avaliados e desenvolvidos com critérios claros?"),
+      ]),
+      mkBlock("des","Análise do Desempenho",[
+        mkQ("LID-DES-01","A empresa mede desempenho com indicadores e revisa periodicamente?"),
+        mkQ("LID-DES-02","Decisões são tomadas com base em dados e lições aprendidas?"),
+      ]),
+    ]),
+    mkArea("estrategia","Estratégia e Planos","Formulação e execução estratégica.",[
+      mkBlock("form","Formulação",[
+        mkQ("EST-FOR-01","A empresa possui direcionadores claros (visão, metas, prioridades)?"),
+        mkQ("EST-FOR-02","Riscos estratégicos são identificados e tratados?"),
+      ]),
+      mkBlock("impl","Implementação",[
+        mkQ("EST-IMP-01","Metas são desdobradas para áreas/equipes com acompanhamento?"),
+        mkQ("EST-IMP-02","Projetos estratégicos têm dono, prazo, orçamento e status?"),
+      ]),
+    ]),
+    mkArea("clientes","Clientes","Mercado, satisfação e relacionamento.",[
+      mkBlock("img","Mercado e Satisfação",[
+        mkQ("CLI-IMG-01","A empresa conhece claramente o público-alvo e suas necessidades?"),
+        mkQ("CLI-IMG-02","A satisfação do cliente é medida com método e frequência?"),
+      ]),
+      mkBlock("rel","Relacionamento",[
+        mkQ("CLI-REL-01","Reclamações são tratadas com SLA e aprendizado?"),
+        mkQ("CLI-REL-02","Existe rotina de retenção/expansão (pós-venda, sucesso do cliente)?"),
+      ]),
+    ]),
+    mkArea("pessoas","Pessoas","Trabalho, capacitação e qualidade de vida.",[
+      mkBlock("sist","Sistemas de Trabalho",[
+        mkQ("PES-SIS-01","Papéis e rotinas estão claros para o time?"),
+        mkQ("PES-SIS-02","A empresa possui feedback/gestão de desempenho consistente?"),
+      ]),
+      mkBlock("cap","Capacitação",[
+        mkQ("PES-CAP-01","Existe trilha de capacitação alinhada à estratégia?"),
+        mkQ("PES-CAP-02","A empresa retém talentos e reduz rotatividade ativamente?"),
+      ]),
+      mkBlock("qv","Qualidade de Vida",[
+        mkQ("PES-QV-01","Há práticas de bem-estar e prevenção de sobrecarga?"),
+        mkQ("PES-QV-02","Clima/engajamento é medido e ações são tomadas?"),
+      ]),
+    ]),
+    mkArea("processos","Processos","Processos principais e de apoio.",[
+      mkBlock("main","Principais",[
+        mkQ("PRO-MAI-01","Processos-chave estão mapeados, padronizados e com dono?"),
+        mkQ("PRO-MAI-02","Existe melhoria contínua com indicadores e rotina?"),
+      ]),
+      mkBlock("apo","Apoio",[
+        mkQ("PRO-APO-01","Financeiro, RH, TI e compras têm processos bem definidos?"),
+        mkQ("PRO-APO-02","Há controle de erros/retrabalho com causas e ações?"),
+      ]),
+    ]),
+    mkArea("resultados","Resultados","Resultados e indicadores.",[
+      mkBlock("fin","Financeiro",[
+        mkQ("RES-FIN-01","A empresa acompanha margens, caixa e metas financeiras com disciplina?"),
+        mkQ("RES-FIN-02","Há previsibilidade (orçamento/forecast) e ações corretivas?"),
+      ]),
+      mkBlock("mix","Clientes/Pessoas/Processos",[
+        mkQ("RES-MIX-01","A empresa acompanha KPIs de cliente (NPS, churn, recompra) e age?"),
+        mkQ("RES-MIX-02","A empresa acompanha KPIs de pessoas e processos e age?"),
+      ]),
+    ]),
+
+    { id:"oportunidades", title:"Oportunidades", subtitle:"Lista priorizada (manual ou IA).", type:"table-opps" },
+    { id:"acoes", title:"Plano de Ação", subtitle:"Ações (manual ou IA).", type:"table-actions" },
+    { id:"insights", title:"Insights (IA)", subtitle:"Resumo e recomendações geradas.", type:"insights" },
+    { id:"admin", title:"Admin", subtitle:"Gerencie seções/blocos/perguntas.", type:"admin" }
+  ]
+};
+
+function mkArea(id,title,subtitle,blocks){ return { id, title, subtitle, blocks }; }
+function mkBlock(id,title,questions){ return { id, title, questions }; }
+function mkQ(id,text){
+  return { id, text, answerKey:null, importance:"Média", deficiencies:[], notes:"", aiNotes:"" };
+}
+
+/** =========================
+ *  1) STATE + LOAD/SAVE
+ *  ========================= */
+let DIAG = loadQuestions();
+let mode = "diagnostico"; // ou "admin"
+
+const state = {
+  currentSectionId: "cadastro",
+  cadastro: loadAnswers()?.cadastro || {},
+  answers: loadAnswers()?.answers || {}, // questionId -> resposta
+  opportunities: loadAnswers()?.opportunities || [],
+  actions: loadAnswers()?.actions || [],
+  insights: loadAnswers()?.insights || {text:"", opportunities:[], actions:[]},
+  ai: loadConfig()
+};
+
+// garante mapa de respostas para todas perguntas existentes
+function hydrateAnswers(){
+  const map = {...state.answers};
+  DIAG.sections.forEach(sec=>{
+    (sec.blocks||[]).forEach(b=>{
+      (b.questions||[]).forEach(q=>{
+        if(!map[q.id]){
+          map[q.id] = { ...q };
+        }else{
+          // preserva resposta, mas atualiza texto (se editou pergunta)
+          map[q.id].text = q.text;
+        }
+      });
+    });
+  });
+  state.answers = map;
+  persistAll();
+}
+
+function loadQuestions(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEYS.QUESTIONS);
+    return raw ? JSON.parse(raw) : DEFAULT_DIAG;
+  }catch{ return DEFAULT_DIAG; }
+}
+function saveQuestions(){ localStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(DIAG)); }
+
+function loadAnswers(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEYS.ANSWERS);
+    return raw ? JSON.parse(raw) : null;
+  }catch{ return null; }
+}
+function saveAnswers(){
+  localStorage.setItem(STORAGE_KEYS.ANSWERS, JSON.stringify({
+    cadastro: state.cadastro,
+    answers: state.answers,
+    opportunities: state.opportunities,
+    actions: state.actions,
+    insights: state.insights
+  }));
+}
+
+function loadConfig(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEYS.CONFIG);
+    if(raw) return JSON.parse(raw);
+  }catch{}
+  return { provider:"openai", privacy:true, openaiKey:"", geminiKey:"", backendEndpoint:"" };
+}
+function saveConfig(){ localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(state.ai)); }
+
+function persistAll(){ saveQuestions(); saveAnswers(); saveConfig(); }
+
+/** =========================
+ *  2) NAV + RENDER
+ *  ========================= */
+function buildNav(){
+  const nav = document.getElementById("nav");
+  nav.innerHTML = "";
+
+  // no modo diagnóstico, ocultar "Admin" do menu de seções (fica só no seletor de modo)
+  const secs = DIAG.sections.filter(s => mode==="admin" ? true : s.id !== "admin");
+
+  secs.forEach(sec=>{
+    const btn = document.createElement("button");
+    btn.className="btn";
+    btn.dataset.section = sec.id;
+    btn.onclick = ()=>go(sec.id);
+    btn.innerHTML = `
+      <div>
+        <div style="font-weight:900">${escapeHtml(sec.title)}</div>
+        <div class="small" style="margin-top:2px">${sec.blocks?.length ? (sec.blocks.length+" blocos") : (sec.type==="admin"?"painel":"")}</div>
+      </div>
+      <span class="pill">${escapeHtml(sec.id)}</span>
+    `;
+    nav.appendChild(btn);
+  });
+  updateNavActive();
+}
+
+function updateNavActive(){
+  document.querySelectorAll("#nav button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.section===state.currentSectionId);
+  });
+}
+
+function go(sectionId){
+  state.currentSectionId = sectionId;
+  render();
+  updateNavActive();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function setMode(newMode){
+  if(newMode==="admin"){
+    if(!adminUnlock()) return;
+    mode = "admin";
+    document.getElementById("modeTag").textContent = "Admin";
+    document.getElementById("sideCard").style.display = "none";
+    document.getElementById("topActions").style.display = "none";
+    // vai pro painel admin
+    state.currentSectionId = "admin";
+  }else{
+    mode = "diagnostico";
+    document.getElementById("modeTag").textContent = "Diagnóstico";
+    document.getElementById("sideCard").style.display = "";
+    document.getElementById("topActions").style.display = "";
+    state.currentSectionId = "cadastro";
+  }
+  buildNav();
+  render();
+}
+
+function adminUnlock(){
+  // PIN opcional: se não existir, cria na primeira vez
+  let pin = localStorage.getItem(STORAGE_KEYS.ADMIN_PIN);
+  if(!pin){
+    const newPin = prompt("Crie um PIN simples para o Admin (ex.: 1234). Você pode deixar vazio para não usar PIN.", "");
+    if(newPin === null) return false;
+    pin = newPin.trim();
+    localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, pin);
+    toast("PIN do Admin configurado.");
+    return true;
+  }
+  if(!pin) return true; // sem PIN
+  const attempt = prompt("Digite o PIN do Admin:", "");
+  if(attempt === null) return false;
+  if(attempt.trim() !== pin){
+    toast("PIN incorreto.");
+    return false;
+  }
+  return true;
+}
+
+function render(){
+  hydrateAnswers(); // garante consistência
+  const sec = DIAG.sections.find(s=>s.id===state.currentSectionId) || DIAG.sections[0];
+
+  document.getElementById("pageTitle").textContent = sec.title;
+  document.getElementById("pageSubtitle").textContent = sec.subtitle || "";
+
+  const content = document.getElementById("content");
+  content.innerHTML = "";
+
+  if(mode==="admin"){
+    content.appendChild(renderAdmin());
+    return;
+  }
+
+  // modo diagnóstico
+  document.getElementById("aiProvider").value = state.ai.provider;
+  document.getElementById("privacyMode").checked = !!state.ai.privacy;
+
+  if(sec.id==="cadastro") content.appendChild(renderCadastro(sec));
+  else if(sec.type==="table-opps") content.appendChild(renderOpps());
+  else if(sec.type==="table-actions") content.appendChild(renderActions());
+  else if(sec.type==="insights") content.appendChild(renderInsights());
+  else content.appendChild(renderSection(sec));
+
+  updateKPIs();
+}
+
+function renderCadastro(sec){
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `<h2>Cadastro</h2><p>Com <b>Privacidade ON</b>, esses campos são mascarados ao enviar para IA.</p>`;
+  sec.fields.forEach(f=>{
+    const div = document.createElement("div");
+    div.className="field";
+    div.style.marginTop="10px";
+    div.innerHTML = `
+      <label>${escapeHtml(f.label)}</label>
+      <input type="text" value="${escapeHtml(state.cadastro[f.id]||"")}" placeholder="${escapeHtml(f.placeholder||"")}" />
+    `;
+    div.querySelector("input").addEventListener("input",(e)=>{
+      state.cadastro[f.id]=e.target.value;
+      saveAnswers();
+    });
+    wrap.appendChild(div);
+  });
+  wrap.appendChild(el(`<div class="hint">Dica: cole a URL da logo do cliente para aparecer no relatório.</div>`));
+  return wrap;
+}
+
+function renderSection(sec){
+  const wrap = document.createElement("div");
+  wrap.appendChild(el(`<h2>${escapeHtml(sec.title)}</h2><p>${escapeHtml(sec.subtitle||"")}</p>`));
+
+  sec.blocks.forEach(block=>{
+    const b = document.createElement("div");
+    b.className = "q";
+    b.appendChild(el(`<div class="qtitle">${escapeHtml(block.title)}</div><div class="hint">${block.questions.length} perguntas</div>`));
+
+    block.questions.forEach(qDef=>{
+      const qObj = state.answers[qDef.id] || {...qDef};
+      const qEl = document.createElement("div");
+      qEl.className = "q";
+      qEl.innerHTML = `
+        <div class="qtitle">${escapeHtml(qObj.text)}</div>
+        <div class="hint">ID: <span style="font-family:var(--mono)">${escapeHtml(qObj.id)}</span></div>
+
+        <div class="field" style="margin-top:10px">
+          <label>Nível atual</label>
+          <div class="radioGroup">
+            ${DIAG.scale.map(s=>`
+              <div class="radioBtn ${qObj.answerKey===s.key?'active':''}" data-q="${qObj.id}" data-level="${s.key}">
+                <span style="width:10px;height:10px;border-radius:999px;background:${s.color};display:inline-block"></span>
+                <span>${escapeHtml(s.label)}</span>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Importância</label>
+            <select data-imp="${qObj.id}">
+              ${DIAG.importance.map(v=>`<option ${qObj.importance===v?'selected':''}>${escapeHtml(v)}</option>`).join("")}
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Deficiências (marque 1 ou mais)</label>
+            <div class="checkRow">
+              ${DIAG.deficiencies.map(d=>`
+                <label class="check">
+                  <input type="checkbox" data-def="${qObj.id}" value="${escapeHtml(d)}" ${qObj.deficiencies?.includes(d)?'checked':''} />
+                  <span>${escapeHtml(d)}</span>
+                </label>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:10px">
+          <label>Observações (manual)</label>
+          <textarea data-notes="${qObj.id}" placeholder="Evidências, contexto e exemplos...">${escapeHtml(qObj.notes||"")}</textarea>
+          <div class="hint">
+            <button class="btn" onclick="suggestNote('${escapeJs(qObj.id)}')">Sugerir observação (IA)</button>
+            <span class="muted">— você pode editar livremente.</span>
+          </div>
+          ${qObj.aiNotes ? `<div class="hint"><b>Sugestão IA (última):</b> ${escapeHtml(qObj.aiNotes)}</div>` : ``}
+        </div>
+      `;
+
+      qEl.querySelectorAll(".radioBtn").forEach(elr=>{
+        elr.addEventListener("click", ()=>{
+          const qid = elr.dataset.q, lvl = elr.dataset.level;
+          state.answers[qid] = state.answers[qid] || {...qObj};
+          state.answers[qid].answerKey = lvl;
+          saveAnswers(); render();
+        });
+      });
+
+      qEl.querySelector(`select[data-imp="${qObj.id}"]`).addEventListener("change",(e)=>{
+        state.answers[qObj.id] = state.answers[qObj.id] || {...qObj};
+        state.answers[qObj.id].importance = e.target.value;
+        saveAnswers(); toast("Importância salva.");
+      });
+
+      qEl.querySelectorAll(`input[data-def="${qObj.id}"]`).forEach(ch=>{
+        ch.addEventListener("change",(e)=>{
+          const cur = new Set(state.answers[qObj.id]?.deficiencies || qObj.deficiencies || []);
+          if(e.target.checked) cur.add(e.target.value); else cur.delete(e.target.value);
+          state.answers[qObj.id] = state.answers[qObj.id] || {...qObj};
+          state.answers[qObj.id].deficiencies = Array.from(cur);
+          saveAnswers(); toast("Deficiências salvas.");
+        });
+      });
+
+      qEl.querySelector(`textarea[data-notes="${qObj.id}"]`).addEventListener("input",(e)=>{
+        state.answers[qObj.id] = state.answers[qObj.id] || {...qObj};
+        state.answers[qObj.id].notes = e.target.value;
+        saveAnswers();
+      });
+
+      b.appendChild(qEl);
+    });
+
+    wrap.appendChild(b);
+  });
+
+  return wrap;
+}
+
+function renderOpps(){
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Oportunidades</h2>
+    <p>Você pode preencher manualmente ou usar <b>Aplicar sugestões</b> após gerar insights.</p>
+    <div class="hint"><button class="btn primary" onclick="applySuggestions()">Aplicar sugestões (da IA)</button></div>
+    <div class="hr"></div>
+  `;
+  if(!state.opportunities.length){
+    wrap.appendChild(el(`<div class="small">Nenhuma oportunidade cadastrada ainda.</div>`));
+  }else{
+    state.opportunities.forEach((o,i)=>{
+      wrap.appendChild(el(`
+        <div class="stat">
+          <div>
+            <div style="font-weight:900">${escapeHtml(o.title||("Oportunidade "+(i+1)))}</div>
+            <div class="small">${escapeHtml(o.area||"")} • Impacto: ${escapeHtml(o.impact||"")} • Esforço: ${escapeHtml(o.effort||"")}</div>
+          </div>
+          <button class="btn" onclick="removeOpp(${i})">Remover</button>
+        </div>
+      `));
+    });
+  }
+  return wrap;
+}
+
+function renderActions(){
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Plano de ação</h2>
+    <p>Ações sugeridas pela IA podem ser aplicadas automaticamente. Você pode editar depois.</p>
+    <div class="hint"><button class="btn primary" onclick="applySuggestions()">Aplicar sugestões (da IA)</button></div>
+    <div class="hr"></div>
+  `;
+  if(!state.actions.length){
+    wrap.appendChild(el(`<div class="small">Nenhuma ação cadastrada ainda.</div>`));
+  }else{
+    state.actions.forEach((a,i)=>{
+      wrap.appendChild(el(`
+        <div class="stat">
+          <div>
+            <div style="font-weight:900">${escapeHtml(a.action||("Ação "+(i+1)))}</div>
+            <div class="small">${escapeHtml(a.owner||"")} • Prazo: ${escapeHtml(a.due||"")} • Custo: ${escapeHtml(a.cost||"")}</div>
+          </div>
+          <button class="btn" onclick="removeAction(${i})">Remover</button>
+        </div>
+      `));
+    });
+  }
+  return wrap;
+}
+
+function renderInsights(){
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Insights (IA)</h2>
+    <p>Gere insights para obter recomendações e preencher Oportunidades/Ações.</p>
+    <div class="hint">
+      <button class="btn primary" onclick="generateInsights()">Gerar insights</button>
+      <button class="btn" onclick="applySuggestions()">Aplicar sugestões</button>
+    </div>
+    <div class="hr"></div>
+  `;
+  wrap.appendChild(el(`<div style="white-space:pre-wrap;line-height:1.5">${escapeHtml(state.insights.text || "Ainda não foi gerado.")}</div>`));
+  return wrap;
+}
+
+/** =========================
+ *  ADMIN PANEL
+ *  ========================= */
+function renderAdmin(){
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Painel Admin</h2>
+    <p>Adicione/remova seções, blocos e perguntas. As alterações ficam salvas no seu navegador (LocalStorage).</p>
+
+    <div class="row">
+      <div class="field">
+        <label>Importar perguntas (JSON)</label>
+        <textarea id="importJson" placeholder='Cole aqui um JSON no formato do DIAG (sections/blocks/questions)...'></textarea>
+        <div class="hint">
+          <button class="btn" onclick="importQuestions()">Importar JSON</button>
+          <button class="btn" onclick="resetQuestions()">Restaurar padrão</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Config Admin</label>
+        <div class="stat">
+          <div>
+            <div style="font-weight:900">PIN do Admin</div>
+            <div class="small">Opcional. Para alterar: clique abaixo.</div>
+          </div>
+          <button class="btn" onclick="changeAdminPin()">Alterar PIN</button>
+        </div>
+        <div class="hr"></div>
+        <div class="stat">
+          <div>
+            <div style="font-weight:900">Exportar</div>
+            <div class="small">Baixe o JSON das perguntas para versionar no GitHub.</div>
+          </div>
+          <button class="btn" onclick="exportQuestions()">Baixar JSON</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="field">
+      <label>Gerenciar Seções</label>
+      <div class="hint">
+        <button class="btn primary" onclick="addSection()">+ Nova seção</button>
+      </div>
+      <div id="adminSections"></div>
+    </div>
+  `;
+
+  setTimeout(()=>renderAdminSections(),0);
+  return wrap;
+}
+
+function renderAdminSections(){
+  const host = document.getElementById("adminSections");
+  if(!host) return;
+  host.innerHTML = "";
+
+  DIAG.sections
+    .filter(s => !["cadastro","oportunidades","acoes","insights","admin"].includes(s.id))
+    .forEach(sec=>{
+      const secDiv = el(`
+        <div class="stat">
+          <div>
+            <div style="font-weight:900">${escapeHtml(sec.title)} <span class="adminTag">${escapeHtml(sec.id)}</span></div>
+            <div class="small">${escapeHtml(sec.subtitle||"")}</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+            <button class="btn" onclick="addBlock('${escapeJs(sec.id)}')">+ Bloco</button>
+            <button class="btn" onclick="editSection('${escapeJs(sec.id)}')">Editar</button>
+            <button class="btn danger" onclick="removeSection('${escapeJs(sec.id)}')">Remover</button>
+          </div>
+        </div>
+      `);
+
+      // blocos
+      (sec.blocks||[]).forEach(b=>{
+        const bDiv = el(`
+          <div class="stat" style="margin-left:18px">
+            <div>
+              <div style="font-weight:900">${escapeHtml(b.title)} <span class="adminTag">${escapeHtml(b.id)}</span></div>
+              <div class="small">${(b.questions||[]).length} perguntas</div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+              <button class="btn" onclick="addQuestion('${escapeJs(sec.id)}','${escapeJs(b.id)}')">+ Pergunta</button>
+              <button class="btn" onclick="editBlock('${escapeJs(sec.id)}','${escapeJs(b.id)}')">Editar</button>
+              <button class="btn danger" onclick="removeBlock('${escapeJs(sec.id)}','${escapeJs(b.id)}')">Remover</button>
+            </div>
+          </div>
+        `);
+
+        // perguntas (preview)
+        (b.questions||[]).slice(0,4).forEach(q=>{
+          bDiv.appendChild(el(`
+            <div class="small" style="margin-left:22px;margin-top:6px">
+              • <span style="font-family:var(--mono)">${escapeHtml(q.id)}</span> — ${escapeHtml(q.text)}
+              <button class="btn" style="padding:4px 8px;margin-left:10px" onclick="editQuestion('${escapeJs(sec.id)}','${escapeJs(b.id)}','${escapeJs(q.id)}')">Editar</button>
+              <button class="btn danger" style="padding:4px 8px" onclick="removeQuestion('${escapeJs(sec.id)}','${escapeJs(b.id)}','${escapeJs(q.id)}')">Remover</button>
+            </div>
+          `));
+        });
+        if((b.questions||[]).length > 4){
+          bDiv.appendChild(el(`<div class="small" style="margin-left:22px;margin-top:6px;color:#6b7280">… e mais ${(b.questions.length-4)} perguntas</div>`));
+        }
+
+        secDiv.appendChild(bDiv);
+      });
+
+      host.appendChild(secDiv);
+    });
+}
+
+/** Admin actions */
+function addSection(){
+  const id = prompt("ID da seção (sem espaços, ex: marketing):","");
+  if(!id) return;
+  const title = prompt("Título da seção:","Nova seção");
+  if(!title) return;
+  const subtitle = prompt("Subtítulo/descrição:","") || "";
+  DIAG.sections.splice(DIAG.sections.findIndex(s=>s.id==="oportunidades"), 0, {id, title, subtitle, blocks:[]});
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); toast("Seção criada.");
+  buildNav();
+}
+function editSection(secId){
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  const title = prompt("Título:", sec.title); if(title!==null) sec.title=title;
+  const subtitle = prompt("Subtítulo:", sec.subtitle||""); if(subtitle!==null) sec.subtitle=subtitle;
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); buildNav(); toast("Seção atualizada.");
+}
+function removeSection(secId){
+  if(!confirm("Remover seção e todos os blocos/perguntas?")) return;
+  DIAG.sections = DIAG.sections.filter(s=>s.id!==secId);
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); buildNav(); toast("Seção removida.");
+}
+function addBlock(secId){
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  const id = prompt("ID do bloco (ex: planejamento):",""); if(!id) return;
+  const title = prompt("Título do bloco:", "Novo bloco"); if(!title) return;
+  sec.blocks = sec.blocks || [];
+  sec.blocks.push({id, title, questions:[]});
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); toast("Bloco criado.");
+}
+function editBlock(secId, blockId){
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  const b = (sec.blocks||[]).find(x=>x.id===blockId); if(!b) return;
+  const title = prompt("Título do bloco:", b.title); if(title!==null) b.title=title;
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); toast("Bloco atualizado.");
+}
+function removeBlock(secId, blockId){
+  if(!confirm("Remover bloco e todas as perguntas?")) return;
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  sec.blocks = (sec.blocks||[]).filter(b=>b.id!==blockId);
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); toast("Bloco removido.");
+}
+function addQuestion(secId, blockId){
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  const b = (sec.blocks||[]).find(x=>x.id===blockId); if(!b) return;
+  const id = prompt("ID da pergunta (único) ex: MKT-PLA-01:","");
+  if(!id) return;
+  const text = prompt("Texto da pergunta:",""); if(!text) return;
+  b.questions = b.questions || [];
+  b.questions.push(mkQ(id, text));
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); toast("Pergunta adicionada.");
+}
+function editQuestion(secId, blockId, qId){
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  const b = (sec.blocks||[]).find(x=>x.id===blockId); if(!b) return;
+  const q = (b.questions||[]).find(x=>x.id===qId); if(!q) return;
+  const newText = prompt("Editar texto:", q.text);
+  if(newText===null) return;
+  q.text = newText;
+  // atualiza texto também no mapa de respostas
+  if(state.answers[qId]) state.answers[qId].text = newText;
+  saveQuestions(); saveAnswers(); renderAdminSections(); toast("Pergunta atualizada.");
+}
+function removeQuestion(secId, blockId, qId){
+  if(!confirm("Remover pergunta?")) return;
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  const b = (sec.blocks||[]).find(x=>x.id===blockId); if(!b) return;
+  b.questions = (b.questions||[]).filter(x=>x.id!==qId);
+  // opcional: manter resposta antiga no storage (não atrapalha), ou remover:
+  delete state.answers[qId];
+  saveQuestions(); saveAnswers(); renderAdminSections(); toast("Pergunta removida.");
+}
+
+function importQuestions(){
+  const txt = document.getElementById("importJson")?.value?.trim();
+  if(!txt) return toast("Cole um JSON primeiro.");
+  try{
+    const obj = JSON.parse(txt);
+    if(!obj.sections) throw new Error("JSON sem 'sections'");
+    DIAG = obj;
+    saveQuestions(); hydrateAnswers();
+    buildNav(); toast("Perguntas importadas.");
+    renderAdminSections();
+  }catch(e){
+    console.error(e);
+    toast("Falha ao importar JSON. Ver console.");
+  }
+}
+function resetQuestions(){
+  if(!confirm("Restaurar perguntas padrão?")) return;
+  DIAG = JSON.parse(JSON.stringify(DEFAULT_DIAG));
+  saveQuestions(); hydrateAnswers();
+  buildNav(); render(); toast("Restaurado.");
+}
+function changeAdminPin(){
+  const pin = prompt("Novo PIN (vazio = sem PIN):","");
+  if(pin===null) return;
+  localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, pin.trim());
+  toast("PIN atualizado.");
+}
+
+/** =========================
+ *  KPIs
+ *  ========================= */
+function updateKPIs(){
+  const allIds = Object.keys(state.answers||{});
+  const total = allIds.length;
+  const answered = allIds.filter(id=>!!state.answers[id]?.answerKey).length;
+  const critical = allIds.filter(id=>state.answers[id]?.answerKey==="CRITICO").length;
+
+  document.getElementById("kpiTotal").textContent = total;
+  document.getElementById("kpiAnswered").textContent = answered;
+  document.getElementById("kpiCritical").textContent = critical;
+
+  const maturity = total ? Math.round(allIds.reduce((acc,id)=>{
+    const key = state.answers[id]?.answerKey;
+    const sc = DIAG.scale.find(s=>s.key===key)?.score ?? 0;
+    return acc + sc;
+  },0)/total) : 0;
+
+  document.getElementById("kpiMaturity").textContent = maturity ? (maturity+"%") : "—";
+}
+
+/** =========================
+ *  IA config
+ *  ========================= */
+document.getElementById("aiProvider").addEventListener("change",(e)=>{
+  state.ai.provider = e.target.value; saveConfig();
+  toast("IA: "+(state.ai.provider==="openai"?"OpenAI":"Gemini"));
+});
+document.getElementById("privacyMode").addEventListener("change",(e)=>{
+  state.ai.privacy = !!e.target.checked; saveConfig();
+  toast("Privacidade "+(state.ai.privacy?"ON":"OFF"));
+});
+
+function openConfig(){
+  const openaiKey = prompt("Cole sua OpenAI API Key (vazio mantém atual):", "");
+  if(openaiKey !== null && openaiKey.trim()) state.ai.openaiKey = openaiKey.trim();
+
+  const geminiKey = prompt("Cole sua Gemini API Key (vazio mantém atual):", "");
+  if(geminiKey !== null && geminiKey.trim()) state.ai.geminiKey = geminiKey.trim();
+
+  const endpoint = prompt("Endpoint backend (recomendado em produção). Vazio = DEV no browser:", state.ai.backendEndpoint || "");
+  if(endpoint !== null) state.ai.backendEndpoint = endpoint.trim();
+
+  saveConfig();
+  toast("Config IA salva.");
+}
+
+/** =========================
+ *  IA payload + calls
+ *  ========================= */
+function buildPayload(){
+  const cadastro = {...state.cadastro};
+  const answers = Object.values(state.answers||{}).map(q=>({
+    id:q.id, text:q.text, level:q.answerKey,
+    importance:q.importance, deficiencies:q.deficiencies, notes:q.notes
+  }));
+
+  if(state.ai.privacy){
+    if(cadastro.contato) cadastro.contato = "[MASCARADO]";
+  }
+
+  return {
+    cadastro,
+    answers,
+    meta:{ answered: answers.filter(a=>!!a.level).length, total: answers.length }
+  };
+}
+
+async function generateInsights(){
+  const payload = buildPayload();
+  if(payload.meta.answered < Math.ceil(payload.meta.total*0.2)){
+    toast("Preencha mais perguntas antes (mín. 20%).");
+    return;
+  }
+  toast("Gerando insights...");
+
+  const prompt = `
+Você é um consultor sênior de gestão. Analise o diagnóstico e gere:
+1) Resumo executivo (tom profissional).
+2) Top 5 pontos fortes e Top 5 gaps.
+3) Hipóteses de causa-raiz para os gaps.
+4) Recomendações priorizadas (impacto x esforço) com 6-10 oportunidades.
+5) Plano de ação 30/60/90 dias.
+Retorne também JSON:
+{"text":"...","opportunities":[{"title":"","area":"","impact":"","effort":"","urgency":"","why":""}],"actions":[{"action":"","owner":"","due":"","cost":"","relatedOpportunityTitle":"","notes":""}]}
+Diagnóstico:
+${JSON.stringify(payload,null,2)}
+`;
+  try{
+    const result = await callAI({task:"insights", prompt, payload});
+    const parsed = safeParseStructured(result);
+    state.insights.text = parsed.text || String(result);
+    state.insights.opportunities = parsed.opportunities || [];
+    state.insights.actions = parsed.actions || [];
+    saveAnswers();
+    toast("Insights gerados.");
+    go("insights");
+  }catch(e){
+    console.error(e);
+    toast("Erro ao gerar insights. Veja console.");
+  }
+}
+
+async function suggestNote(questionId){
+  const q = state.answers[questionId];
+  if(!q || !q.answerKey) return toast("Selecione um nível primeiro.");
+  toast("Gerando observação...");
+  const prompt = `
+Gere uma observação curta (2-5 linhas) para relatório profissional baseada na pergunta/resposta.
+Inclua: evidência provável, risco/impacto e sugestão imediata. Retorne apenas texto.
+Pergunta: ${q.text}
+Nível: ${q.answerKey}
+Importância: ${q.importance}
+Deficiências: ${(q.deficiencies||[]).join(", ")||"—"}
+Obs atual: ${q.notes||"—"}
+`;
+  try{
+    const result = await callAI({task:"note", prompt, payload:{questionId}});
+    q.aiNotes = String(result).trim();
+    if(!q.notes) q.notes = q.aiNotes;
+    saveAnswers();
+    render();
+    toast("Observação sugerida.");
+  }catch(e){
+    console.error(e);
+    toast("Erro ao sugerir observação.");
+  }
+}
+
+function applySuggestions(){
+  const opps = state.insights.opportunities || [];
+  const acts = state.insights.actions || [];
+  if(!opps.length && !acts.length) return toast("Gere insights primeiro.");
+  if(!confirm("Aplicar sugestões irá anexar oportunidades e ações. OK?")) return;
+  state.opportunities = state.opportunities.concat(opps);
+  state.actions = state.actions.concat(acts);
+  saveAnswers();
+  toast("Sugestões aplicadas.");
+  go("oportunidades");
+}
+
+function removeOpp(i){ state.opportunities.splice(i,1); saveAnswers(); render(); }
+function removeAction(i){ state.actions.splice(i,1); saveAnswers(); render(); }
+
+function resetAll(){
+  if(!confirm("Resetar diagnóstico? Isso apaga respostas, oportunidades, ações e insights.")) return;
+  Object.values(state.answers||{}).forEach(q=>{
+    q.answerKey=null; q.importance="Média"; q.deficiencies=[]; q.notes=""; q.aiNotes="";
+  });
+  state.cadastro={}; state.opportunities=[]; state.actions=[];
+  state.insights={text:"",opportunities:[],actions:[]};
+  saveAnswers();
+  toast("Reset concluído.");
+  go("cadastro");
+}
+
+async function callAI({task, prompt, payload}){
+  if(state.ai.backendEndpoint){
+    const res = await fetch(state.ai.backendEndpoint, {
+      method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({provider: state.ai.provider, task, prompt, payload})
+    });
+    if(!res.ok) throw new Error("Backend error "+res.status);
+    const data = await res.json();
+    return data.text ?? data.output ?? data;
+  }
+  // DEV (no browser)
+  if(state.ai.provider==="openai"){
+    if(!state.ai.openaiKey) throw new Error("OpenAI key não configurada.");
+    return await callOpenAI(prompt);
+  } else {
+    if(!state.ai.geminiKey) throw new Error("Gemini key não configurada.");
+    return await callGemini(prompt);
+  }
+}
+
+async function callOpenAI(prompt){
+  const res = await fetch("https://api.openai.com/v1/chat/completions",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+state.ai.openaiKey },
+    body: JSON.stringify({
+      model:"gpt-4.1-mini", temperature:0.3,
+      messages:[
+        {role:"system",content:"Você é um consultor empresarial sênior. Seja prático e estruturado."},
+        {role:"user",content:prompt}
+      ]
+    })
+  });
+  if(!res.ok) throw new Error("OpenAI error "+res.status);
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content || "";
+}
+
+async function callGemini(prompt){
+  const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="+encodeURIComponent(state.ai.geminiKey);
+  const res = await fetch(url,{
+    method:"POST", headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ contents:[{role:"user",parts:[{text:prompt}]}], generationConfig:{temperature:0.3} })
+  });
+  if(!res.ok) throw new Error("Gemini error "+res.status);
+  const data = await res.json();
+  return data.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("") || "";
+}
+
+function safeParseStructured(text){
+  const raw = String(text||"");
+  const match = raw.match(/\{[\s\S]*\}/);
+  if(!match) return {text:raw, opportunities:[], actions:[]};
+  try{
+    const obj = JSON.parse(match[0]);
+    return { text: obj.text || raw, opportunities: obj.opportunities || [], actions: obj.actions || [] };
+  }catch{
+    return {text:raw, opportunities:[], actions:[]};
+  }
+}
+
+/** =========================
+ *  Export / Report
+ *  ========================= */
+function exportAnswers(){
+  const data = { generatedAt:new Date().toISOString(), cadastro:state.cadastro, answers:state.answers, opportunities:state.opportunities, actions:state.actions, insights:state.insights };
+  download("respostas_diagnostico.json", JSON.stringify(data,null,2), "application/json");
+  toast("Respostas baixadas.");
+}
+function exportQuestions(){
+  download("perguntas_diagnostico.json", JSON.stringify(DIAG,null,2), "application/json");
+  toast("Perguntas baixadas.");
+}
+function openReport(){
+  const rep = buildReportHTML();
+  const w = window.open("", "_blank");
+  w.document.open(); w.document.write(rep); w.document.close();
+}
+function buildReportHTML(){
+  const cad = state.cadastro||{};
+  const logoCliente = cad.logo_cliente_url ? `<img src="${escapeHtml(cad.logo_cliente_url)}" style="height:52px;object-fit:contain" />` : `<div style="color:#6b7280;font-size:12px">Logo do cliente (opcional)</div>`;
+  const all = Object.values(state.answers||{}).filter(a=>a.answerKey);
+  const toScore = (k)=> DIAG.scale.find(s=>s.key===k)?.score ?? 0;
+  const maturity = all.length ? Math.round(all.reduce((a,q)=>a+toScore(q.answerKey),0)/all.length) : 0;
+
+  const worst = [...all].sort((a,b)=>toScore(a.answerKey)-toScore(b.answerKey)).slice(0,5);
+  const best  = [...all].sort((a,b)=>toScore(b.answerKey)-toScore(a.answerKey)).slice(0,5);
+
+  return `
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"/>
+<title>Relatório — Diagnóstico</title>
+<style>
+  body{font-family:ui-sans-serif,system-ui;margin:28px;color:#111}
+  .hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5e7eb;padding-bottom:14px;margin-bottom:16px}
+  h1{font-size:20px;margin:0}
+  .sub{color:#374151;margin-top:6px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{border:1px solid #e5e7eb;border-radius:14px;padding:14px}
+  .muted{color:#374151}
+  table{width:100%;border-collapse:collapse}
+  th,td{border-bottom:1px solid #f1f5f9;padding:8px;text-align:left;font-size:13px;vertical-align:top}
+  th{color:#374151;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+  .kpi{font-weight:900}
+</style></head><body>
+<div class="hdr">
+  <div style="display:flex;gap:14px;align-items:center">
+    <img src="${DIAG.brand.logoUrl}" style="height:22px;object-fit:contain" />
+    <div>
+      <h1>Relatório — Diagnóstico Empresarial</h1>
+      <div class="sub">${escapeHtml(cad.empresa_nome||"Empresa")} • ${escapeHtml(cad.segmento||"")} • ${escapeHtml(cad.cidade_uf||"")}</div>
+    </div>
+  </div>
+  <div style="text-align:right">
+    ${logoCliente}
+    <div class="muted" style="font-size:12px;margin-top:6px">Maturidade geral: <span class="kpi">${maturity?maturity+"%":"—"}</span></div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="muted">Resumo executivo</div>
+    <div style="white-space:pre-wrap;line-height:1.5;margin-top:8px">${escapeHtml(state.insights.text || "Gere insights para preencher automaticamente esta seção.")}</div>
+  </div>
+  <div class="card">
+    <div class="muted">Top 5 gaps</div>
+    <table><thead><tr><th>Pergunta</th><th>Nível</th><th>Imp.</th></tr></thead><tbody>
+      ${worst.map(w=>`<tr><td>${escapeHtml(w.text)}</td><td>${escapeHtml(w.answerKey)}</td><td>${escapeHtml(w.importance||"")}</td></tr>`).join("")}
+    </tbody></table>
+    <div style="height:10px"></div>
+    <div class="muted">Top 5 pontos fortes</div>
+    <table><thead><tr><th>Pergunta</th><th>Nível</th><th>Imp.</th></tr></thead><tbody>
+      ${best.map(b=>`<tr><td>${escapeHtml(b.text)}</td><td>${escapeHtml(b.answerKey)}</td><td>${escapeHtml(b.importance||"")}</td></tr>`).join("")}
+    </tbody></table>
+  </div>
+</div>
+
+<div style="margin-top:16px" class="card">
+  <div class="muted">Oportunidades</div>
+  ${state.opportunities.length ? `
+    <table><thead><tr><th>Título</th><th>Área</th><th>Impacto</th><th>Esforço</th><th>Urgência</th></tr></thead><tbody>
+      ${state.opportunities.map(o=>`<tr><td>${escapeHtml(o.title||"")}</td><td>${escapeHtml(o.area||"")}</td><td>${escapeHtml(o.impact||"")}</td><td>${escapeHtml(o.effort||"")}</td><td>${escapeHtml(o.urgency||"")}</td></tr>`).join("")}
+    </tbody></table>` : `<div style="margin-top:8px" class="muted">Nenhuma oportunidade cadastrada.</div>`}
+</div>
+
+<div style="margin-top:16px" class="card">
+  <div class="muted">Plano de Ação</div>
+  ${state.actions.length ? `
+    <table><thead><tr><th>Ação</th><th>Responsável</th><th>Prazo</th><th>Custo</th><th>Ligação</th></tr></thead><tbody>
+      ${state.actions.map(a=>`<tr><td>${escapeHtml(a.action||"")}</td><td>${escapeHtml(a.owner||"")}</td><td>${escapeHtml(a.due||"")}</td><td>${escapeHtml(a.cost||"")}</td><td>${escapeHtml(a.relatedOpportunityTitle||"")}</td></tr>`).join("")}
+    </tbody></table>` : `<div style="margin-top:8px" class="muted">Nenhuma ação cadastrada.</div>`}
+</div>
+
+<div class="muted" style="font-size:12px;margin-top:16px">Impressão: Ctrl+P / Salvar como PDF.</div>
+</body></html>`;
+}
+
+function exportQuestionsFile(){ exportQuestions(); }
+function importQuestionsFile(){}
+
+function download(filename, content, mime){
+  const blob = new Blob([content], {type:mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function el(html){
+  const d = document.createElement("div");
+  d.innerHTML = html.trim();
+  return d.firstChild;
+}
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2200);
+}
+function escapeHtml(s){
+  return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+function escapeJs(s){
+  return String(s||"").replaceAll("\\","\\\\").replaceAll("'","\\'");
+}
+
+/** init */
+buildNav();
+render();
+</script>
+</body>
+</html>
