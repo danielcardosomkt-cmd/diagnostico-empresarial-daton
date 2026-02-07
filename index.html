@@ -1030,7 +1030,8 @@ async function callAI({task, prompt, payload}){
     return await callOpenAI(prompt);
   } else {
     if(!state.ai.geminiKey) throw new Error("Gemini key não configurada.");
-    return await callGemini(prompt);
+    const cfg = JSON.parse(localStorage.getItem("daton_diag_config_v1") || "{}");
+const apiKey = (cfg.geminiKey || state.ai?.geminiKey || "").trim();
   }
 }
 
@@ -1240,5 +1241,6 @@ render();
 </script>
 </body>
 </html>
+
 
 
