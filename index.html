@@ -892,16 +892,23 @@ document.getElementById("privacyMode").addEventListener("change",(e)=>{
 });
 
 function openConfig(){
+  // garante config mais recente antes de editar
+  state.ai = loadConfig();
+
   const openaiKey = prompt("Cole sua OpenAI API Key (vazio mantém atual):", "");
   if(openaiKey !== null && openaiKey.trim()) state.ai.openaiKey = openaiKey.trim();
 
   const geminiKey = prompt("Cole sua Gemini API Key (vazio mantém atual):", "");
   if(geminiKey !== null && geminiKey.trim()) state.ai.geminiKey = geminiKey.trim();
 
-  const endpoint = prompt("Endpoint backend (recomendado em produção). Vazio = DEV no browser:", state.ai.backendEndpoint || "");
+  const endpoint = prompt(
+    "Endpoint backend (recomendado em produção). Vazio = DEV no browser:",
+    state.ai.backendEndpoint || ""
+  );
   if(endpoint !== null) state.ai.backendEndpoint = endpoint.trim();
 
   saveConfig();
+  state.ai = loadConfig();
   toast("Config IA salva.");
 }
 
@@ -1014,24 +1021,34 @@ function resetAll(){
   go("cadastro");
 }
 
-async function callAI({task, prompt, payload}){
-  if(state.ai.backendEndpoint){
+async function callAI({ task, prompt, payload }) {
+  // SEMPRE sincroniza com localStorage antes de chamar IA
+  state.ai = loadConfig();
+
+  if (state.ai.backendEndpoint) {
     const res = await fetch(state.ai.backendEndpoint, {
-      method:"POST", headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({provider: state.ai.provider, task, prompt, payload})
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ provider: state.ai.provider, task, prompt, payload })
     });
-    if(!res.ok) throw new Error("Backend error "+res.status);
+    if (!res.ok) throw new Error("Backend error " + res.status);
     const data = await res.json();
     return data.text ?? data.output ?? data;
   }
+
   // DEV (no browser)
-  if(state.ai.provider==="openai"){
-    if(!state.ai.openaiKey) throw new Error("OpenAI key não configurada.");
+  if (state.ai.provider === "openai") {
+    if (!state.ai.openaiKey) throw new Error("OpenAI key não configurada.");
     return await callOpenAI(prompt);
-  } else {
-    if(!state.ai.geminiKey) throw new Error("Gemini key não configurada.");
-    return await callGemini(prompt);
   }
+
+  if (state.ai.provider === "gemini") {
+    const apiKey = (state.ai.geminiKey || "").trim();
+    if (!apiKey) throw new Error("Gemini key não configurada.");
+    return await callGemini({ prompt, apiKey, model: "gemini-1.5-flash" });
+  }
+
+  throw new Error("Provider inválido: " + state.ai.provider);
 }
 
 async function callOpenAI(prompt){
