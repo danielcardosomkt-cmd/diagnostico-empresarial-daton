@@ -1050,7 +1050,6 @@ async function callOpenAI(prompt){
   const data = await res.json();
   return data.choices?.[0]?.message?.content || "";
 }
-
 async function callGemini({ prompt, apiKey, model = "gemini-1.5-flash" }) {
   if (!apiKey || apiKey.trim().length < 10) {
     throw new Error("Gemini: API key não configurada.");
@@ -1094,6 +1093,7 @@ async function callGemini({ prompt, apiKey, model = "gemini-1.5-flash" }) {
   if (!out) throw new Error("Gemini: resposta vazia.");
   return out;
 }
+
 
 
 function safeParseStructured(text){
@@ -1240,4 +1240,5 @@ render();
 </script>
 </body>
 </html>
+
 
