@@ -983,9 +983,17 @@ Deficiências: ${(q.deficiencies||[]).join(", ")||"—"}
 Obs atual: ${q.notes||"—"}
 `;
   try{
-    const result = await callAI({task:"note", prompt, payload:{questionId}});
-    q.aiNotes = String(result).trim();
-    if(!q.notes) q.notes = q.aiNotes;
+   const result = await callAI({ task:"note", prompt, payload:{ questionId } });
+
+const text = (typeof result === "string" ? result : (result?.text ?? result?.output ?? "")).toString().trim();
+
+if (!text) {
+  throw new Error("IA retornou vazio (sem texto).");
+}
+
+q.aiNotes = text;
+if (!q.notes) q.notes = text;
+
     saveAnswers();
     render();
     toast("Observação sugerida.");
@@ -1103,11 +1111,14 @@ async function callGemini({ prompt, apiKey, model = "gemini-1.5-flash" }) {
     throw new Error(`Gemini error ${res.status}: ${msg}`);
   }
 
-  const out =
-    data?.candidates?.[0]?.content?.parts
-      ?.map(p => p.text)
-      ?.filter(Boolean)
-      ?.join("") || "";
+ const out =
+  data?.candidates?.[0]?.content?.parts
+    ?.map(p => p?.text)
+    ?.filter(Boolean)
+    ?.join("") 
+  || data?.candidates?.[0]?.content?.text
+  || data?.text
+  || "";
 
   if (!out) throw new Error("Gemini: resposta vazia.");
   return out;
@@ -1259,6 +1270,7 @@ render();
 </script>
 </body>
 </html>
+
 
 
 
