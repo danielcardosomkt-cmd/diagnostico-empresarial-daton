@@ -1051,15 +1051,26 @@ async function callOpenAI(prompt){
   return data.choices?.[0]?.message?.content || "";
 }
 
-async function callGemini(prompt){
-  const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="+encodeURIComponent(state.ai.geminiKey);
-  const res = await fetch(url,{
-    method:"POST", headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ contents:[{role:"user",parts:[{text:prompt}]}], generationConfig:{temperature:0.3} })
-  });
-  if(!res.ok) throw new Error("Gemini error "+res.status);
-  const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("") || "";
+async function callGemini (prompt){
+    const apiKey = localStorage.getItem('aiApiKey');
+    if (!apiKey) {
+        throw new Error('API Key não configurada. Clique em "Configurar IA" primeiro.');
+    }
+    
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    
+    const res = await fetch(url, {
+        method: "POST", 
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            contents: [{role:"user", parts: [{text:prompt}]}], 
+            generationConfig: {temperature:0.3} 
+        })
+    });
+    
+    if(!res.ok) throw new Error("Gemini error "+res.status);
+    const data = await res.json();
+    return data.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("") || "";
 }
 
 function safeParseStructured(text){
@@ -1206,3 +1217,4 @@ render();
 </script>
 </body>
 </html>
+
