@@ -1054,7 +1054,11 @@ async function callAI({ task, prompt, payload }) {
   if (state.ai.provider === "gemini") {
     const apiKey = (state.ai.geminiKey || "").trim();
     if (!apiKey) throw new Error("Gemini key não configurada.");
-    return await callGemini({ prompt, apiKey, model: "gemini-1.5-flash" });
+    return await callGemini({
+  prompt,
+  apiKey: state.ai.geminiKey,
+  model: state.ai.geminiModel
+});
   }
 
   throw new Error("Provider inválido: " + state.ai.provider);
@@ -1077,7 +1081,8 @@ async function callOpenAI(prompt){
   const data = await res.json();
   return data.choices?.[0]?.message?.content || "";
 }
-async function callGemini({ prompt, apiKey, model = "gemini-1.5-flash" }) {
+async function callGemini({ prompt, apiKey, model }){
+  model = model || state?.ai?.geminiModel || "gemini-2.5-flash";
   if (!apiKey || apiKey.trim().length < 10) {
     throw new Error("Gemini: API key não configurada.");
   }
@@ -1270,6 +1275,7 @@ render();
 </script>
 </body>
 </html>
+
 
 
 
