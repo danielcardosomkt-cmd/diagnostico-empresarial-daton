@@ -1081,9 +1081,10 @@ async function callOpenAI(prompt){
   const data = await res.json();
   return data.choices?.[0]?.message?.content || "";
 }
-async function callGemini({ prompt, apiKey, model }){
-  model = model || state?.ai?.geminiModel || "gemini-2.5-flash";
-  if (!apiKey || apiKey.trim().length < 10) {
+async function callGemini({ prompt, apiKey, model }) {
+  model = model || state.ai.geminiModel;
+  if(!model) throw new Error("Gemini: Modelo não configurado. Configure um modelo válido.");
+ {
     throw new Error("Gemini: API key não configurada.");
   }
 
@@ -1275,6 +1276,7 @@ render();
 </script>
 </body>
 </html>
+
 
 
 
