@@ -355,11 +355,6 @@ async function listGeminiModels(){
       return;
     }
 
-    toast("Buscando modelos do Gemini...");
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
-    const res = await fetch(url);
-    const data = await res.json().catch(()=> ({}));
 
     if(!res.ok){
       const msg = data?.error?.message || `Erro HTTP ${res.status}`;
@@ -943,11 +938,7 @@ function openConfig(){
       return;
     }
 
-    toast("Buscando modelos do Gemini...");
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
-    const res = await fetch(url);
-    const data = await res.json().catch(()=> ({}));
+   
 
     if(!res.ok){
       const msg = data?.error?.message || `Erro HTTP ${res.status}`;
@@ -975,12 +966,6 @@ function openConfig(){
 }
 
 
-    toast("Buscando modelos do Gemini...");
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
-    const res = await fetch(url);
-
-    const data = await res.json().catch(()=> ({}));
 
     if(!res.ok){
       const msg = data?.error?.message || `Erro HTTP ${res.status}`;
@@ -1395,6 +1380,7 @@ render();
 </script>
 </body>
 </html>
+
 
 
 
