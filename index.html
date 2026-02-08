@@ -125,10 +125,6 @@
         </label>
         <button class="btn" onclick="openConfig()">Configurar IA</button>
         <button class="btn primary" onclick="generateInsights()">Gerar insights</button>
-        <button class="btn" onclick="listGeminiModels()">Listar Modelos Gemini</button>
-<button class="btn" onclick="openConfig()">Configurar IA</button>
-<button class="btn primary" onclick="generateInsights()">Gerar insights</button>
-
       </div>
     </div>
 
@@ -343,7 +339,7 @@ function loadConfig(){
     const raw = localStorage.getItem(STORAGE_KEYS.CONFIG);
     if(raw) return JSON.parse(raw);
   }catch{}
-  return { provider:"openai", privacy:true, openaiKey:"", geminiKey:"", geminiModel:"gemini-1.5-pro", backendEndpoint:"" };
+  return { provider:"openai", privacy:true, openaiKey:"", geminiKey:"", backendEndpoint:"" };
 }
 function saveConfig(){ localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(state.ai)); }
 
@@ -904,11 +900,7 @@ function openConfig(){
 
   const geminiKey = prompt("Cole sua Gemini API Key (vazio mantém atual):", "");
   if(geminiKey !== null && geminiKey.trim()) state.ai.geminiKey = geminiKey.trim();
-const geminiModel = prompt(
-  "Modelo Gemini (ex.: gemini-1.5-pro). Vazio mantém atual:",
-  state.ai.geminiModel || "gemini-1.5-pro"
-);
-if(geminiModel !== null && geminiModel.trim()) state.ai.geminiModel = geminiModel.trim();
+
   const endpoint = prompt(
     "Endpoint backend (recomendado em produção). Vazio = DEV no browser:",
     state.ai.backendEndpoint || ""
@@ -993,9 +985,11 @@ Obs atual: ${q.notes||"—"}
   try{
    const result = await callAI({ task:"note", prompt, payload:{ questionId } });
 
-const rawText = (typeof result === "string" ? result : (result?.text ?? result?.output ?? ""));
-const text = String(rawText ?? "").trim();
-if (!text || text === "undefined") throw new Error("IA retornou vazio/ inválido (sem texto).");
+const text = (typeof result === "string" ? result : (result?.text ?? result?.output ?? "")).toString().trim();
+
+if (!text) {
+  throw new Error("IA retornou vazio (sem texto).");
+}
 
 q.aiNotes = text;
 if (!q.notes) q.notes = text;
@@ -1060,7 +1054,7 @@ async function callAI({ task, prompt, payload }) {
   if (state.ai.provider === "gemini") {
     const apiKey = (state.ai.geminiKey || "").trim();
     if (!apiKey) throw new Error("Gemini key não configurada.");
-    return await callGemini({ prompt, apiKey, model: state.ai.geminiModel || "gemini-1.5-pro" });
+    return await callGemini({ prompt, apiKey, model: "gemini-1.5-flash" });
   }
 
   throw new Error("Provider inválido: " + state.ai.provider);
@@ -1083,7 +1077,7 @@ async function callOpenAI(prompt){
   const data = await res.json();
   return data.choices?.[0]?.message?.content || "";
 }
-async function callGemini({ prompt, apiKey, model = "gemini-1.5-pro" }) {
+async function callGemini({ prompt, apiKey, model = "gemini-1.5-flash" }) {
   if (!apiKey || apiKey.trim().length < 10) {
     throw new Error("Gemini: API key não configurada.");
   }
@@ -1113,15 +1107,9 @@ async function callGemini({ prompt, apiKey, model = "gemini-1.5-pro" }) {
   try { data = JSON.parse(raw); } catch { data = { raw }; }
 
   if (!res.ok) {
-  let msg = data?.error?.message || raw || `HTTP ${res.status}`;
-
-  if (res.status === 404) {
-    msg = `Modelo "${model}" não encontrado ou não suporta generateContent na v1beta. ` +
-          `Troque o modelo em Configurar IA (ex.: gemini-1.5-pro).`;
+    const msg = data?.error?.message || raw || `HTTP ${res.status}`;
+    throw new Error(`Gemini error ${res.status}: ${msg}`);
   }
-
-  throw new Error(`Gemini error ${res.status}: ${msg}`);
-}
 
  const out =
   data?.candidates?.[0]?.content?.parts
@@ -1282,8 +1270,6 @@ render();
 </script>
 </body>
 </html>
-
-
 
 
 
