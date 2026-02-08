@@ -1052,7 +1052,7 @@ async function callOpenAI(prompt){
 }
 
 async function callGemini (prompt){
-    const apiKey = localStorage.getItem('aiApiKey');
+    const apiKey = state.ai.geminiKey;
     if (!apiKey) {
         throw new Error('API Key não configurada. Clique em "Configurar IA" primeiro.');
     }
@@ -1217,3 +1217,4 @@ render();
 </script>
 </body>
 </html>
+
