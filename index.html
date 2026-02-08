@@ -896,6 +896,51 @@ document.getElementById("privacyMode").addEventListener("change",(e)=>{
 });
 
 function openConfig(){
+  async function listGeminiModels(){
+  try{
+    // garante que estamos usando a config mais recente
+    state.ai = loadConfig();
+
+    const apiKey = (state.ai.geminiKey || "").trim();
+    if(!apiKey){
+      toast("Cole sua Gemini API Key em “Configurar IA” primeiro.");
+      return;
+    }
+
+    toast("Buscando modelos do Gemini...");
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
+    const res = await fetch(url);
+
+    const data = await res.json().catch(()=> ({}));
+
+    if(!res.ok){
+      const msg = data?.error?.message || `Erro HTTP ${res.status}`;
+      alert("Erro ao listar modelos Gemini:\n" + msg);
+      return;
+    }
+
+    const models = (data.models || [])
+      .map(m => m.name)
+      .filter(Boolean);
+
+    if(!models.length){
+      alert("Nenhum modelo retornado para essa chave.");
+      return;
+    }
+
+    // mostra nomes sem o prefixo models/ (pra colar no campo Modelo Gemini)
+    const cleaned = models.map(n => n.replace(/^models\//, ""));
+
+    alert(
+      "Modelos Gemini disponíveis (copie e cole no campo “Modelo Gemini”):\n\n" +
+      cleaned.join("\n")
+    );
+  }catch(err){
+    alert("Falha ao listar modelos Gemini:\n" + (err?.message || err));
+  }
+}
+
   // garante config mais recente antes de editar
   state.ai = loadConfig();
 
@@ -1282,6 +1327,7 @@ render();
 </script>
 </body>
 </html>
+
 
 
 
