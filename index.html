@@ -1,1074 +1,1219 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagnóstico Empresarial Daton</title>
-    <link rel="icon" href="https://daton.com.br/wp-content/uploads/2023/06/cropped-favicon-daton-32x32.png" sizes="32x32" /><br/>
-    <link rel="icon" href="https://daton.com.br/wp-content/uploads/2023/06/cropped-favicon-daton-192x192.png" sizes="192x192" /><br/>
-    <link rel="apple-touch-icon" href="https://daton.com.br/wp-content/uploads/2023/06/cropped-favicon-daton-180x180.png" /><br/>
-    <meta name="msapplication-TileImage" content="https://daton.com.br/wp-content/uploads/2023/06/cropped-favicon-daton-270x270.png" />
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;<br/>
-            margin: 0;<br/>
-            padding: 0;<br/>
-            background-color: #f4f7f6;<br/>
-            color: #333;<br/>
-            display: flex;<br/>
-            flex-direction: column;<br/>
-            min-height: 100vh;
-        }
-        header {
-            background-color: #004d40; /* Dark Teal */<br/>
-            color: white;<br/>
-            padding: 15px 20px;<br/>
-            display: flex;<br/>
-            justify-content: space-between;<br/>
-            align-items: center;<br/>
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);<br/>
-            flex-wrap: wrap;
-        }
-        header h1 {
-            margin: 0;<br/>
-            font-size: 24px;<br/>
-            display: flex;<br/>
-            align-items: center;
-        }
-        header h1 img {
-            height: 40px;<br/>
-            margin-right: 10px;
-        }
-        .header-controls {
-            display: flex;<br/>
-            gap: 10px;<br/>
-            align-items: center;<br/>
-            flex-wrap: wrap;<br/>
-            margin-top: 5px;
-        }
-        .header-controls button, .header-controls select {
-            padding: 8px 15px;<br/>
-            border: none;<br/>
-            border-radius: 5px;<br/>
-            cursor: pointer;<br/>
-            font-size: 14px;<br/>
-            transition: background-color 0.3s ease;
-        }
-        .header-controls button.primary {
-            background-color: #00796b; /* Medium Teal */<br/>
-            color: white;
-        }
-        .header-controls button.primary:hover {<br/>
-            background-color: #00695c; /* Slightly darker Teal */
-        }
-        .header-controls button.secondary {
-            background-color: #e0e0e0;<br/>
-            color: #333;
-        }
-        .header-controls button.secondary:hover {<br/>
-            background-color: #d0d0d0;
-        }
-        .header-controls select {
-            background-color: white;<br/>
-            border: 1px solid #ccc;
-        }
-        main {
-            display: flex;<br/>
-            flex: 1;<br/>
-            padding: 20px;<br/>
-            gap: 20px;<br/>
-            flex-wrap: wrap;
-        }
-        .sidebar {
-            flex: 0 0 280px;<br/>
-            background-color: white;<br/>
-            padding: 20px;<br/>
-            border-radius: 8px;<br/>
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);<br/>
-            overflow-y: auto;<br/>
-            max-height: calc(100vh - 120px);
-        }
-        .sidebar h2 {
-            margin-top: 0;<br/>
-            color: #004d40;<br/>
-            font-size: 20px;<br/>
-            border-bottom: 1px solid #eee;<br/>
-            padding-bottom: 10px;<br/>
-            margin-bottom: 15px;
-        }
-        .sidebar ul {
-            list-style: none;<br/>
-            padding: 0;
-        }
-        .sidebar ul li {
-            margin-bottom: 10px;
-        }
-        .sidebar ul li a {
-            text-decoration: none;<br/>
-            color: #555;<br/>
-            display: block;<br/>
-            padding: 8px 10px;<br/>
-            border-radius: 4px;<br/>
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
-        .sidebar ul li a:hover {<br/>
-            background-color: #e0f2f1; /* Light Teal */<br/>
-            color: #004d40;
-        }
-        .sidebar ul li a.active {
-            background-color: #00796b;<br/>
-            color: white;<br/>
-            font-weight: bold;
-        }
-        .content {
-            flex: 1;<br/>
-            background-color: white;<br/>
-            padding: 25px;<br/>
-            border-radius: 8px;<br/>
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);<br/>
-            overflow-y: auto;<br/>
-            max-height: calc(100vh - 120px);
-        }
-        .content h2 {
-            color: #004d40;<br/>
-            margin-top: 0;<br/>
-            font-size: 22px;<br/>
-            border-bottom: 1px solid #eee;<br/>
-            padding-bottom: 10px;<br/>
-            margin-bottom: 20px;
-        }
-        .question-section {
-            margin-bottom: 30px;
-        }
-        .question-section h3 {
-            color: #00796b;<br/>
-            margin-bottom: 15px;<br/>
-            font-size: 18px;
-        }
-        .question-item {
-            background-color: #f9f9f9;<br/>
-            border: 1px solid #eee;<br/>
-            border-radius: 6px;<br/>
-            padding: 15px;<br/>
-            margin-bottom: 15px;
-        }
-        .question-item label {
-            display: block;<br/>
-            margin-bottom: 10px;<br/>
-            font-weight: bold;<br/>
-            color: #444;
-        }
-        .question-item textarea {
-            width: calc(100% - 20px);<br/>
-            padding: 10px;<br/>
-            border: 1px solid #ccc;<br/>
-            border-radius: 4px;<br/>
-            min-height: 60px;<br/>
-            resize: vertical;<br/>
-            font-size: 14px;
-        }
-        .question-item select {
-            width: 100%;<br/>
-            padding: 10px;<br/>
-            border: 1px solid #ccc;<br/>
-            border-radius: 4px;<br/>
-            font-size: 14px;<br/>
-            background-color: white;
-        }
-        .question-item .score-display {
-            margin-top: 10px;<br/>
-            font-weight: bold;<br/>
-            color: #004d40;
-        }
-        .question-item .ai-suggestion {
-            margin-top: 15px;<br/>
-            padding: 10px;<br/>
-            background-color: #e0f2f1;<br/>
-            border-left: 4px solid #00796b;<br/>
-            border-radius: 4px;<br/>
-            font-size: 13px;<br/>
-            color: #333;
-        }
-        .question-item .ai-suggestion p {
-            margin: 0 0 5px 0;
-        }
-        .question-item .ai-suggestion strong {
-            color: #004d40;
-        }
-        .question-item .ai-suggestion button {
-            background-color: #00796b;<br/>
-            color: white;<br/>
-            border: none;<br/>
-            padding: 5px 10px;<br/>
-            border-radius: 4px;<br/>
-            cursor: pointer;<br/>
-            font-size: 12px;<br/>
-            margin-top: 5px;<br/>
-            transition: background-color 0.3s ease;
-        }
-        .question-item .ai-suggestion button:hover {<br/>
-            background-color: #00695c;
-        }
-        .results {
-            margin-top: 30px;<br/>
-            padding-top: 20px;<br/>
-            border-top: 1px solid #eee;
-        }
-        .results h2 {
-            color: #004d40;<br/>
-            font-size: 22px;<br/>
-            margin-bottom: 20px;
-        }
-        .results-summary {
-            display: flex;<br/>
-            flex-wrap: wrap;<br/>
-            gap: 20px;<br/>
-            margin-bottom: 30px;
-        }
-        .summary-card {
-            background-color: #e0f2f1;<br/>
-            border-left: 5px solid #00796b;<br/>
-            border-radius: 8px;<br/>
-            padding: 20px;<br/>
-            flex: 1;<br/>
-            min-width: 250px;<br/>
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .summary-card h3 {
-            margin-top: 0;<br/>
-            color: #004d40;<br/>
-            font-size: 18px;<br/>
-            margin-bottom: 10px;
-        }
-        .summary-card p {
-            margin: 0;<br/>
-            font-size: 16px;<br/>
-            color: #333;
-        }
-        .results-details {
-            display: grid;<br/>
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));<br/>
-            gap: 20px;
-        }
-        .detail-card {
-            background-color: #f9f9f9;<br/>
-            border: 1px solid #eee;<br/>
-            border-radius: 8px;<br/>
-            padding: 20px;<br/>
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-        }
-        .detail-card h3 {
-            margin-top: 0;<br/>
-            color: #00796b;<br/>
-            font-size: 18px;<br/>
-            margin-bottom: 10px;
-        }
-        .detail-card p {
-            font-size: 14px;<br/>
-            line-height: 1.6;<br/>
-            color: #555;
-        }
-        .detail-card ul {
-            list-style: disc;<br/>
-            margin-left: 20px;<br/>
-            padding: 0;<br/>
-            font-size: 14px;<br/>
-            color: #555;
-        }
-        .detail-card ul li {
-            margin-bottom: 5px;
-        }
-        footer {
-            background-color: #004d40;<br/>
-            color: white;<br/>
-            text-align: center;<br/>
-            padding: 15px 20px;<br/>
-            margin-top: 20px;<br/>
-            font-size: 14px;<br/>
-            box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
-        }
-        .toast {
-            visibility: hidden;<br/>
-            min-width: 250px;<br/>
-            background-color: #333;<br/>
-            color: #fff;<br/>
-            text-align: center;<br/>
-            border-radius: 5px;<br/>
-            padding: 16px;<br/>
-            position: fixed;<br/>
-            z-index: 1;<br/>
-            left: 50%;<br/>
-            transform: translateX(-50%);<br/>
-            bottom: 30px;<br/>
-            font-size: 17px;<br/>
-            white-space: nowrap;
-        }
-        .toast.show {
-            visibility: visible;<br/>
-            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;<br/>
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        }
-        @-webkit-keyframes fadein {
-            from {bottom: 0; opacity: 0;} <br/>
-            to {bottom: 30px; opacity: 1;}
-        }
-        @keyframes fadein {
-            from {bottom: 0; opacity: 0;}<br/>
-            to {bottom: 30px; opacity: 1;}
-        }
-        @-webkit-keyframes fadeout {
-            from {bottom: 30px; opacity: 1;} <br/>
-            to {bottom: 0; opacity: 0;}
-        }
-        @keyframes fadeout {
-            from {bottom: 30px; opacity: 1;}<br/>
-            to {bottom: 0; opacity: 0;}
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;<br/>
-                align-items: flex-start;
-            }
-            .header-controls {
-                margin-top: 15px;<br/>
-                width: 100%;<br/>
-                justify-content: flex-start;
-            }
-            .header-controls button, .header-controls select {
-                flex-grow: 1;
-            }
-            main {
-                flex-direction: column;<br/>
-                padding: 15px;
-            }
-            .sidebar {
-                flex: none;<br/>
-                width: 100%;<br/>
-                max-height: none;
-            }
-            .content {
-                flex: none;<br/>
-                width: 100%;<br/>
-                max-height: none;<br/>
-                padding: 20px;
-            }
-            .results-summary {
-                flex-direction: column;
-            }
-            .summary-card {
-                min-width: unset;<br/>
-                width: 100%;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Diagnóstico Empresarial — daton.os</title>
+  <style>
+    :root{
+      --bg:#F8FAFC; --card:#FFFFFF; --line:#E5E7EB;
+      --text:#111111; --muted:#374151;
+      --primary:#2563EB; --primary-soft:#DBEAFE;
+      --danger:#DC2626; --warn:#F59E0B; --ok:#2563EB; --good:#16A34A;
+      --shadow: 0 10px 24px rgba(17,24,39,.08);
+      --radius: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:var(--sans);color:var(--text);background:linear-gradient(180deg,#fff 0%,var(--bg) 100%)}
+    .app{display:grid;grid-template-columns:320px 1fr;min-height:100vh}
+    aside{position:sticky;top:0;height:100vh;background:var(--bg);border-right:1px solid var(--line);padding:18px 16px;overflow:auto}
+    main{padding:22px 22px 60px}
+    .brand{display:flex;align-items:center;gap:10px;padding:10px 10px 14px;border-bottom:1px solid var(--line);margin-bottom:14px}
+    .brand img{width:110px;height:auto;display:block}
+    .brand .tag{font-size:12px;color:var(--muted);padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#fff}
+    .nav h3{margin:14px 10px 8px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+    .nav button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;margin:6px 0;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;transition:.15s;text-align:left}
+    .nav button:hover{border-color:#cbd5e1;transform:translateY(-1px)}
+    .nav button.active{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12);background:linear-gradient(180deg,#fff 0%,rgba(37,99,235,.04) 100%)}
+    .pill{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:#fff;white-space:nowrap}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}
+    .title h1{font-size:18px;margin:0}
+    .title p{margin:4px 0 0;color:var(--muted);font-size:13px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+    .select,.toggle{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--line);background:#fff;border-radius:12px;font-size:13px;color:var(--muted)}
+    select,input[type="text"],input[type="password"],textarea{font:inherit;border:1px solid var(--line);border-radius:12px;padding:10px 12px;outline:none;background:#fff}
+    select:focus,input:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+    .btn{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;cursor:pointer;transition:.15s;font-weight:600}
+    .btn:hover{transform:translateY(-1px);border-color:#cbd5e1}
+    .btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+    .grid{display:grid;grid-template-columns:1.4fr .6fr;gap:16px;align-items:start}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+    .card h2{margin:0 0 6px;font-size:15px}
+    .card p{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.4}
+    .hr{height:1px;background:var(--line);margin:14px 0}
+    .small{font-size:12px;color:var(--muted)}
+    .q{border-top:1px dashed var(--line);padding-top:14px;margin-top:14px}
+    .q:first-of-type{border-top:none;padding-top:0;margin-top:0}
+    .qtitle{font-weight:800;font-size:14px;line-height:1.35;margin:0}
+    .hint{font-size:12px;color:var(--muted);margin-top:8px}
+    textarea{width:100%;min-height:90px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    .field label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+    .radioGroup{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .radioBtn{border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;background:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;user-select:none;text-align:center}
+    .radioBtn.active{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12);background:linear-gradient(180deg,#fff 0%,rgba(37,99,235,.05) 100%);font-weight:800}
+    .checkRow{display:flex;gap:10px;flex-wrap:wrap}
+    .check{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:#fff;font-size:13px;color:var(--muted)}
+    .stat{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin-top:10px;background:#fff;gap:10px}
+    .kpi{font-weight:900}
+    .muted{color:var(--muted)}
+    .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;border-radius:14px;padding:12px 14px;box-shadow:0 14px 30px rgba(0,0,0,.18);font-size:13px;opacity:0;transform:translateY(6px);transition:.18s;max-width:420px;z-index:9999}
+    .toast.show{opacity:1;transform:translateY(0)}
+    @media (max-width:980px){.app{grid-template-columns:1fr}aside{position:relative;height:auto}.grid{grid-template-columns:1fr}.radioGroup{grid-template-columns:1fr 1fr}}
+    .adminTag{font-family:var(--mono);font-size:11px;border:1px solid var(--line);padding:4px 8px;border-radius:999px;background:#fff;color:var(--muted)}
+    .danger{color:#fff;background:var(--danger);border-color:var(--danger)}
+  </style>
 </head>
 <body>
-    <header>
-        <h1>
-            <img src="https://daton.com.br/wp-content/uploads/2023/06/cropped-favicon-daton-192x192.png" alt="Daton Logo">
-            Diagnóstico Empresarial
-        </h1>
-        <div class="header-controls">
-            <select id="aiModelSelect">
-                <option value="gemini">IA: Gemini</option><br/>
-                <option value="openai">IA: OpenAI</option>
-            </select>
-            <button class="secondary" onclick="openConfig()">Configurar IA</button>
-            <button class="primary" onclick="generateInsights()">Gerar Insights</button>
-            <button class="secondary" onclick="exportToPDF()">Exportar PDF</button>
-            <button class="secondary" onclick="resetForm()">Limpar Tudo</button>
+<div class="app">
+  <aside>
+    <div class="brand">
+      <img alt="daton.os" src="https://www.genspark.ai/api/files/s/GrP2M92N" />
+      <span class="tag" id="modeTag">Diagnóstico</span>
+    </div>
+
+    <div class="nav">
+      <h3>Modo</h3>
+      <button class="btn" onclick="setMode('diagnostico')">
+        <div><div style="font-weight:900">Diagnóstico</div><div class="small">Responder e gerar relatório</div></div>
+        <span class="pill">run</span>
+      </button>
+      <button class="btn" onclick="setMode('admin')">
+        <div><div style="font-weight:900">Admin</div><div class="small">Editar perguntas</div></div>
+        <span class="pill">edit</span>
+      </button>
+
+      <div class="hr"></div>
+
+      <h3>Seções</h3>
+      <div id="nav"></div>
+
+      <div class="hr"></div>
+
+      <h3>Exportação</h3>
+      <button class="btn" onclick="exportAnswers()">Baixar respostas (JSON)</button>
+      <button class="btn" onclick="exportQuestions()">Baixar perguntas (JSON)</button>
+      <button class="btn" onclick="openReport()">Abrir relatório (impressão)</button>
+
+      <div class="hr"></div>
+      <div class="small">
+        Dica Admin: use “Importar JSON” para colar seu banco completo de perguntas.
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div class="title">
+        <h1 id="pageTitle">Cadastro</h1>
+        <p id="pageSubtitle">Preencha os dados mínimos antes de iniciar o diagnóstico.</p>
+      </div>
+
+      <div class="actions" id="topActions">
+        <div class="select">
+          <span>IA:</span>
+          <select id="aiProvider">
+            <option value="openai">OpenAI (GPT)</option>
+            <option value="gemini">Gemini</option>
+          </select>
         </div>
-    </header>
+        <label class="toggle">
+          <input id="privacyMode" type="checkbox" checked />
+          <span>Privacidade ON</span>
+        </label>
+        <button class="btn" onclick="openConfig()">Configurar IA</button>
+        <button class="btn primary" onclick="generateInsights()">Gerar insights</button>
+      </div>
+    </div>
 
-    <main>
-        <aside class="sidebar">
-            <h2>Áreas de Análise</h2>
-            <ul id="section-list">
-                <!-- Sections will be loaded here by JavaScript -->
-            </ul>
-        </aside>
+    <div class="grid">
+      <div class="card" id="content"></div>
 
-        <section class="content" id="question-content">
-            <!-- Questions will be loaded here by JavaScript -->
-        </section>
-    </main>
+      <div class="card" id="sideCard">
+        <h2>Status</h2>
+        <p>Progresso do diagnóstico e atalhos.</p>
 
-    <footer>
-        &copy; 2024 Daton. Todos os direitos reservados.
-    </footer>
+        <div class="stat">
+          <div><div class="muted" style="font-size:12px;">Respondidas</div><div class="kpi" id="kpiAnswered">0</div></div>
+          <div><div class="muted" style="font-size:12px;">Total</div><div class="kpi" id="kpiTotal">0</div></div>
+        </div>
 
-    <div id="toast" class="toast"></div>
+        <div class="stat">
+          <div><div class="muted" style="font-size:12px;">Crítico</div><div class="kpi" id="kpiCritical">0</div></div>
+          <div class="adminTag" id="kpiMaturity">—</div>
+        </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><br/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script>
-        // Global state object
-        const state = {
-            currentSection: 'gestao-estrategica',<br/>
-            answers: {},<br/>
-            ai: {<br/>
-                model: 'gemini', // Default AI model<br/>
-                openaiKey: '',<br/>
-                geminiKey: '',<br/>
-                backendEndpoint: '' // Optional backend endpoint for AI calls
-            },
-            sections: [
-                {
-                    id: 'gestao-estrategica',<br/>
-                    name: 'Gestão Estratégica',<br/>
-                    questions: [<br/>
-                        { id: 'q1', text: 'A empresa possui uma missão, visão e valores claramente definidos e comunicados a todos os colaboradores?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q2', text: 'Existe um planejamento estratégico formal (ex: plano de negócios, OKRs) com metas e indicadores de desempenho claros?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q3', text: 'A empresa realiza análise SWOT ou outras ferramentas para identificar forças, fraquezas, oportunidades e ameaças regularmente?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q4', text: 'Os objetivos estratégicos são desdobrados em metas táticas e operacionais para cada área/equipe?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q5', text: 'A liderança da empresa demonstra comprometimento e engajamento com a execução da estratégia?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q6', text: 'Existe um processo de acompanhamento e revisão periódica do planejamento estratégico?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q7', text: 'A cultura organizacional está alinhada com a estratégia e os valores da empresa?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q8', text: 'A empresa possui um plano de sucessão para cargos chave?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q9', text: 'A empresa utiliza indicadores de desempenho (KPIs) para monitorar o progresso em relação aos objetivos estratégicos?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q10', text: 'A empresa promove a inovação e a adaptação a novas tendências de mercado?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q11', text: 'Descreva brevemente a estratégia atual da sua empresa e como ela se diferencia dos concorrentes.', type: 'textarea' },<br/>
-                        { id: 'q12', text: 'Quais são os 3 maiores desafios estratégicos que sua empresa enfrenta hoje?', type: 'textarea' }
-                    ]
-                },
-                {
-                    id: 'gestao-financeira',<br/>
-                    name: 'Gestão Financeira',<br/>
-                    questions: [<br/>
-                        { id: 'q1', text: 'A empresa possui um orçamento anual detalhado e o acompanha regularmente?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q2', text: 'Existe um fluxo de caixa projetado e real, com análise de entradas e saídas?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q3', text: 'A empresa realiza análise de custos e despesas para identificar oportunidades de otimização?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q4', text: 'Os preços dos produtos/serviços são definidos com base em custos, valor percebido e concorrência?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q5', text: 'A empresa possui capital de giro adequado para suas operações?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q6', text: 'Há um controle rigoroso de contas a pagar e a receber?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q7', text: 'A empresa realiza projeções financeiras para cenários futuros (otimista, realista, pessimista)?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q8', text: 'Existe uma política de gestão de riscos financeiros (ex: câmbio, juros, inadimplência)?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q9', text: 'A empresa utiliza ferramentas de análise financeira (ex: DRE, Balanço Patrimonial) para tomada de decisão?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q10', text: 'A empresa possui acesso a linhas de crédito e financiamento adequadas às suas necessidades?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q11', text: 'Qual a principal fonte de receita da sua empresa e como ela é gerida?', type: 'textarea' },<br/>
-                        { id: 'q12', text: 'Quais são os 3 maiores desafios financeiros que sua empresa enfrenta hoje?', type: 'textarea' }
-                    ]
-                },
-                {
-                    id: 'gestao-de-marketing-e-vendas',<br/>
-                    name: 'Gestão de Marketing e Vendas',<br/>
-                    questions: [<br/>
-                        { id: 'q1', text: 'A empresa possui um plano de marketing e vendas com objetivos e estratégias claras?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q2', text: 'Existe uma definição clara do público-alvo e das personas dos clientes?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q3', text: 'A empresa utiliza canais de marketing digital (ex: redes sociais, e-mail marketing, SEO)?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q4', text: 'Há um processo de vendas bem definido, desde a prospecção até o pós-venda?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q5', text: 'A equipe de vendas recebe treinamento e acompanhamento contínuo?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q6', text: 'A empresa monitora a satisfação do cliente e utiliza o feedback para melhorias?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q7', text: 'Existe um CRM (Customer Relationship Management) ou sistema similar para gerenciar clientes e vendas?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q8', text: 'A empresa realiza campanhas de marketing e vendas com métricas de desempenho (ROI)?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q9', text: 'A empresa possui uma proposta de valor clara e comunicada de forma eficaz?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q10', text: 'A empresa se adapta às mudanças no comportamento do consumidor e nas tendências de mercado?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q11', text: 'Descreva suas principais estratégias de marketing e vendas e o que as torna eficazes.', type: 'textarea' },<br/>
-                        { id: 'q12', text: 'Quais são os 3 maiores desafios de marketing e vendas que sua empresa enfrenta hoje?', type: 'textarea' }
-                    ]
-                },
-                {
-                    id: 'gestao-de-pessoas',<br/>
-                    name: 'Gestão de Pessoas',<br/>
-                    questions: [<br/>
-                        { id: 'q1', text: 'A empresa possui um plano de recrutamento e seleção eficaz para atrair talentos?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q2', text: 'Existe um programa de integração (onboarding) para novos colaboradores?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q3', text: 'A empresa investe no desenvolvimento e treinamento contínuo dos colaboradores?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q4', text: 'Há um sistema de avaliação de desempenho justo e transparente?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q5', text: 'A empresa oferece um plano de carreira e oportunidades de crescimento profissional?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q6', text: 'Existe uma política de remuneração e benefícios competitiva e alinhada ao mercado?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q7', text: 'A empresa promove um ambiente de trabalho saudável, com boa comunicação e clima organizacional?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q8', text: 'Há um processo eficaz para gerenciar conflitos e resolver problemas entre colaboradores?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q9', text: 'A empresa reconhece e recompensa o bom desempenho dos colaboradores?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q10', text: 'A empresa possui uma baixa taxa de rotatividade (turnover) de colaboradores?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q11', text: 'Como sua empresa atrai e retém os melhores talentos?', type: 'textarea' },<br/>
-                        { id: 'q12', text: 'Quais são os 3 maiores desafios na gestão de pessoas que sua empresa enfrenta hoje?', type: 'textarea' }
-                    ]
-                },
-                {
-                    id: 'gestao-de-processos-e-operacoes',<br/>
-                    name: 'Gestão de Processos e Operações',<br/>
-                    questions: [<br/>
-                        { id: 'q1', text: 'Os processos operacionais da empresa são mapeados, documentados e otimizados regularmente?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q2', text: 'A empresa utiliza tecnologia e automação para otimizar processos e reduzir erros?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q3', text: 'Existe um controle de qualidade eficaz para produtos/serviços?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q4', text: 'A empresa gerencia seu estoque de forma eficiente, evitando excessos ou faltas?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q5', text: 'Há um plano de manutenção preventiva para equipamentos e infraestrutura?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q6', text: 'A empresa possui um plano de contingência para interrupções operacionais (ex: desastres, falhas de sistema)?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q7', text: 'Os fornecedores são avaliados e gerenciados para garantir qualidade e pontualidade?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q8', text: 'A empresa utiliza indicadores de desempenho (KPIs) para monitorar a eficiência operacional?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q9', text: 'A empresa busca a melhoria contínua dos seus processos (ex: Lean, Six Sigma)?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q10', text: 'A empresa cumpre as normas e regulamentações de segurança e meio ambiente?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q11', text: 'Descreva o processo operacional mais crítico da sua empresa e como ele é gerenciado.', type: 'textarea' },<br/>
-                        { id: 'q12', text: 'Quais são os 3 maiores desafios operacionais que sua empresa enfrenta hoje?', type: 'textarea' }
-                    ]
-                },
-                {
-                    id: 'gestao-de-tecnologia-e-inovacao',<br/>
-                    name: 'Gestão de Tecnologia e Inovação',<br/>
-                    questions: [<br/>
-                        { id: 'q1', text: 'A empresa possui uma estratégia de tecnologia alinhada aos objetivos de negócio?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q2', text: 'Existe um plano de investimento em tecnologia e inovação?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q3', text: 'A empresa utiliza sistemas de gestão (ERP, CRM, BI) para otimizar processos e tomada de decisão?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q4', text: 'Há uma política de segurança da informação e proteção de dados (LGPD)?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q5', text: 'A empresa investe em pesquisa e desenvolvimento (P&D) ou em novas tecnologias?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q6', text: 'Os colaboradores recebem treinamento para utilizar as tecnologias disponíveis?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q7', text: 'A empresa monitora as tendências tecnológicas e as aplica em seu negócio?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q8', text: 'Existe um processo para gerenciar projetos de tecnologia e inovação?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q9', text: 'A empresa utiliza a análise de dados (Big Data, Analytics) para obter insights e tomar decisões?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q10', text: 'A empresa possui uma infraestrutura de TI robusta e segura?', type: 'select', options: ['Não se aplica', 'Não', 'Parcialmente', 'Sim'], score: [0, 1, 3, 5] },<br/>
-                        { id: 'q11', text: 'Quais tecnologias são mais importantes para o sucesso da sua empresa e como você as utiliza?', type: 'textarea' },<br/>
-                        { id: 'q12', text: 'Quais são os 3 maiores desafios de tecnologia e inovação que sua empresa enfrenta hoje?', type: 'textarea' }
-                    ]
-                }
-            ]
-        };
+        <div class="hr"></div>
 
-        // Load state from localStorage
-        function loadState() {
-            const savedState = localStorage.getItem('diagnosticoEmpresarialState');
-            if (savedState) {
-                Object.assign(state, JSON.parse(savedState));
-            }
+        <button class="btn" onclick="applySuggestions()">Aplicar sugestões (Oportunidades + Ações)</button>
+        <button class="btn danger" onclick="resetAll()">Reset diagnóstico</button>
+
+        <div class="hr"></div>
+        <div class="small" id="sideHint">Preencha pelo menos 60% para insights melhores.</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/** =========================
+ *  0) PERGUNTAS (EDITÁVEL NO ADMIN)
+ *  - Persistência: LocalStorage
+ *  ========================= */
+const STORAGE_KEYS = {
+  QUESTIONS: "daton_diag_questions_v1",
+  ANSWERS: "daton_diag_answers_v1",
+  CONFIG: "daton_diag_config_v1",
+  ADMIN_PIN: "daton_diag_admin_pin_v1"
+};
+
+const DEFAULT_DIAG = {
+  brand: { name: "daton.os", logoUrl: "https://www.genspark.ai/api/files/s/GrP2M92N" },
+  scale: [
+    { key:"CRITICO", label:"Crítico", color:"#DC2626", score: 0 },
+    { key:"DESENV", label:"Em desenvolvimento", color:"#F59E0B", score: 33 },
+    { key:"ADEQ",   label:"Adequado", color:"#2563EB", score: 66 },
+    { key:"MADURO", label:"Maduro", color:"#16A34A", score: 100 },
+  ],
+  importance: ["Baixa","Média","Alta"],
+  deficiencies: ["Técnica","Comportamental","Ferramental"],
+  sections: [
+    { id:"cadastro", title:"Cadastro", subtitle:"Dados básicos do diagnóstico.", type:"form",
+      fields:[
+        {id:"empresa_nome", label:"Nome da empresa", placeholder:"Ex.: Empresa X"},
+        {id:"segmento", label:"Segmento", placeholder:"Ex.: Serviços / Indústria / Varejo"},
+        {id:"cidade_uf", label:"Cidade/UF", placeholder:"Ex.: São Paulo/SP"},
+        {id:"contato", label:"Contato (opcional)", placeholder:"Ex.: nome/e-mail (será mascarado)"},
+        {id:"logo_cliente_url", label:"Logo do cliente (URL)", placeholder:"Link público PNG/JPG"},
+      ]
+    },
+
+    // Estrutura por áreas FNQ (placeholders — você ajusta no Admin)
+    mkArea("lideranca","Liderança","Governança, liderança e análise de desempenho.",[
+      mkBlock("gov","Governança Corporativa",[
+        mkQ("LID-GOV-01","Existe clareza sobre papéis e responsabilidades de liderança e decisão?"),
+        mkQ("LID-GOV-02","A empresa possui rituais de governança (reuniões, indicadores, decisões registradas)?"),
+      ]),
+      mkBlock("exer","Exercício da Liderança",[
+        mkQ("LID-EXE-01","A liderança reforça cultura, valores e padrões de qualidade de forma consistente?"),
+        mkQ("LID-EXE-02","Líderes são avaliados e desenvolvidos com critérios claros?"),
+      ]),
+      mkBlock("des","Análise do Desempenho",[
+        mkQ("LID-DES-01","A empresa mede desempenho com indicadores e revisa periodicamente?"),
+        mkQ("LID-DES-02","Decisões são tomadas com base em dados e lições aprendidas?"),
+      ]),
+    ]),
+    mkArea("estrategia","Estratégia e Planos","Formulação e execução estratégica.",[
+      mkBlock("form","Formulação",[
+        mkQ("EST-FOR-01","A empresa possui direcionadores claros (visão, metas, prioridades)?"),
+        mkQ("EST-FOR-02","Riscos estratégicos são identificados e tratados?"),
+      ]),
+      mkBlock("impl","Implementação",[
+        mkQ("EST-IMP-01","Metas são desdobradas para áreas/equipes com acompanhamento?"),
+        mkQ("EST-IMP-02","Projetos estratégicos têm dono, prazo, orçamento e status?"),
+      ]),
+    ]),
+    mkArea("clientes","Clientes","Mercado, satisfação e relacionamento.",[
+      mkBlock("img","Mercado e Satisfação",[
+        mkQ("CLI-IMG-01","A empresa conhece claramente o público-alvo e suas necessidades?"),
+        mkQ("CLI-IMG-02","A satisfação do cliente é medida com método e frequência?"),
+      ]),
+      mkBlock("rel","Relacionamento",[
+        mkQ("CLI-REL-01","Reclamações são tratadas com SLA e aprendizado?"),
+        mkQ("CLI-REL-02","Existe rotina de retenção/expansão (pós-venda, sucesso do cliente)?"),
+      ]),
+    ]),
+    mkArea("pessoas","Pessoas","Trabalho, capacitação e qualidade de vida.",[
+      mkBlock("sist","Sistemas de Trabalho",[
+        mkQ("PES-SIS-01","Papéis e rotinas estão claros para o time?"),
+        mkQ("PES-SIS-02","A empresa possui feedback/gestão de desempenho consistente?"),
+      ]),
+      mkBlock("cap","Capacitação",[
+        mkQ("PES-CAP-01","Existe trilha de capacitação alinhada à estratégia?"),
+        mkQ("PES-CAP-02","A empresa retém talentos e reduz rotatividade ativamente?"),
+      ]),
+      mkBlock("qv","Qualidade de Vida",[
+        mkQ("PES-QV-01","Há práticas de bem-estar e prevenção de sobrecarga?"),
+        mkQ("PES-QV-02","Clima/engajamento é medido e ações são tomadas?"),
+      ]),
+    ]),
+    mkArea("processos","Processos","Processos principais e de apoio.",[
+      mkBlock("main","Principais",[
+        mkQ("PRO-MAI-01","Processos-chave estão mapeados, padronizados e com dono?"),
+        mkQ("PRO-MAI-02","Existe melhoria contínua com indicadores e rotina?"),
+      ]),
+      mkBlock("apo","Apoio",[
+        mkQ("PRO-APO-01","Financeiro, RH, TI e compras têm processos bem definidos?"),
+        mkQ("PRO-APO-02","Há controle de erros/retrabalho com causas e ações?"),
+      ]),
+    ]),
+    mkArea("resultados","Resultados","Resultados e indicadores.",[
+      mkBlock("fin","Financeiro",[
+        mkQ("RES-FIN-01","A empresa acompanha margens, caixa e metas financeiras com disciplina?"),
+        mkQ("RES-FIN-02","Há previsibilidade (orçamento/forecast) e ações corretivas?"),
+      ]),
+      mkBlock("mix","Clientes/Pessoas/Processos",[
+        mkQ("RES-MIX-01","A empresa acompanha KPIs de cliente (NPS, churn, recompra) e age?"),
+        mkQ("RES-MIX-02","A empresa acompanha KPIs de pessoas e processos e age?"),
+      ]),
+    ]),
+
+    { id:"oportunidades", title:"Oportunidades", subtitle:"Lista priorizada (manual ou IA).", type:"table-opps" },
+    { id:"acoes", title:"Plano de Ação", subtitle:"Ações (manual ou IA).", type:"table-actions" },
+    { id:"insights", title:"Insights (IA)", subtitle:"Resumo e recomendações geradas.", type:"insights" },
+    { id:"admin", title:"Admin", subtitle:"Gerencie seções/blocos/perguntas.", type:"admin" }
+  ]
+};
+
+function mkArea(id,title,subtitle,blocks){ return { id, title, subtitle, blocks }; }
+function mkBlock(id,title,questions){ return { id, title, questions }; }
+function mkQ(id,text){
+  return { id, text, answerKey:null, importance:"Média", deficiencies:[], notes:"", aiNotes:"" };
+}
+
+/** =========================
+ *  1) STATE + LOAD/SAVE
+ *  ========================= */
+let DIAG = loadQuestions();
+let mode = "diagnostico"; // ou "admin"
+
+const state = {
+  currentSectionId: "cadastro",
+  cadastro: loadAnswers()?.cadastro || {},
+  answers: loadAnswers()?.answers || {}, // questionId -> resposta
+  opportunities: loadAnswers()?.opportunities || [],
+  actions: loadAnswers()?.actions || [],
+  insights: loadAnswers()?.insights || {text:"", opportunities:[], actions:[]},
+  ai: loadConfig()
+};
+
+// garante mapa de respostas para todas perguntas existentes
+function hydrateAnswers(){
+  const map = {...state.answers};
+  DIAG.sections.forEach(sec=>{
+    (sec.blocks||[]).forEach(b=>{
+      (b.questions||[]).forEach(q=>{
+        if(!map[q.id]){
+          map[q.id] = { ...q };
+        }else{
+          // preserva resposta, mas atualiza texto (se editou pergunta)
+          map[q.id].text = q.text;
         }
+      });
+    });
+  });
+  state.answers = map;
+  persistAll();
+}
 
-        // Save state to localStorage
-        function saveState() {
-            localStorage.setItem('diagnosticoEmpresarialState', JSON.stringify(state));
-        }
+function loadQuestions(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEYS.QUESTIONS);
+    return raw ? JSON.parse(raw) : DEFAULT_DIAG;
+  }catch{ return DEFAULT_DIAG; }
+}
+function saveQuestions(){ localStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(DIAG)); }
 
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', () => {
-            loadState();
-            renderSidebar();
-            loadSection(state.currentSection);
-            document.getElementById('aiModelSelect').value = state.ai.model;
+function loadAnswers(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEYS.ANSWERS);
+    return raw ? JSON.parse(raw) : null;
+  }catch{ return null; }
+}
+function saveAnswers(){
+  localStorage.setItem(STORAGE_KEYS.ANSWERS, JSON.stringify({
+    cadastro: state.cadastro,
+    answers: state.answers,
+    opportunities: state.opportunities,
+    actions: state.actions,
+    insights: state.insights
+  }));
+}
+
+function loadConfig(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEYS.CONFIG);
+    if(raw) return JSON.parse(raw);
+  }catch{}
+  return { provider:"openai", privacy:true, openaiKey:"", geminiKey:"", backendEndpoint:"" };
+}
+function saveConfig(){ localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(state.ai)); }
+
+function persistAll(){ saveQuestions(); saveAnswers(); saveConfig(); }
+
+/** =========================
+ *  2) NAV + RENDER
+ *  ========================= */
+function buildNav(){
+  const nav = document.getElementById("nav");
+  nav.innerHTML = "";
+
+  // no modo diagnóstico, ocultar "Admin" do menu de seções (fica só no seletor de modo)
+  const secs = DIAG.sections.filter(s => mode==="admin" ? true : s.id !== "admin");
+
+  secs.forEach(sec=>{
+    const btn = document.createElement("button");
+    btn.className="btn";
+    btn.dataset.section = sec.id;
+    btn.onclick = ()=>go(sec.id);
+    btn.innerHTML = `
+      <div>
+        <div style="font-weight:900">${escapeHtml(sec.title)}</div>
+        <div class="small" style="margin-top:2px">${sec.blocks?.length ? (sec.blocks.length+" blocos") : (sec.type==="admin"?"painel":"")}</div>
+      </div>
+      <span class="pill">${escapeHtml(sec.id)}</span>
+    `;
+    nav.appendChild(btn);
+  });
+  updateNavActive();
+}
+
+function updateNavActive(){
+  document.querySelectorAll("#nav button").forEach(b=>{
+    b.classList.toggle("active", b.dataset.section===state.currentSectionId);
+  });
+}
+
+function go(sectionId){
+  state.currentSectionId = sectionId;
+  render();
+  updateNavActive();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function setMode(newMode){
+  if(newMode==="admin"){
+    if(!adminUnlock()) return;
+    mode = "admin";
+    document.getElementById("modeTag").textContent = "Admin";
+    document.getElementById("sideCard").style.display = "none";
+    document.getElementById("topActions").style.display = "none";
+    // vai pro painel admin
+    state.currentSectionId = "admin";
+  }else{
+    mode = "diagnostico";
+    document.getElementById("modeTag").textContent = "Diagnóstico";
+    document.getElementById("sideCard").style.display = "";
+    document.getElementById("topActions").style.display = "";
+    state.currentSectionId = "cadastro";
+  }
+  buildNav();
+  render();
+}
+
+function adminUnlock(){
+  // PIN opcional: se não existir, cria na primeira vez
+  let pin = localStorage.getItem(STORAGE_KEYS.ADMIN_PIN);
+  if(!pin){
+    const newPin = prompt("Crie um PIN simples para o Admin (ex.: 1234). Você pode deixar vazio para não usar PIN.", "");
+    if(newPin === null) return false;
+    pin = newPin.trim();
+    localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, pin);
+    toast("PIN do Admin configurado.");
+    return true;
+  }
+  if(!pin) return true; // sem PIN
+  const attempt = prompt("Digite o PIN do Admin:", "");
+  if(attempt === null) return false;
+  if(attempt.trim() !== pin){
+    toast("PIN incorreto.");
+    return false;
+  }
+  return true;
+}
+
+function render(){
+  hydrateAnswers(); // garante consistência
+  const sec = DIAG.sections.find(s=>s.id===state.currentSectionId) || DIAG.sections[0];
+
+  document.getElementById("pageTitle").textContent = sec.title;
+  document.getElementById("pageSubtitle").textContent = sec.subtitle || "";
+
+  const content = document.getElementById("content");
+  content.innerHTML = "";
+
+  if(mode==="admin"){
+    content.appendChild(renderAdmin());
+    return;
+  }
+
+  // modo diagnóstico
+  document.getElementById("aiProvider").value = state.ai.provider;
+  document.getElementById("privacyMode").checked = !!state.ai.privacy;
+
+  if(sec.id==="cadastro") content.appendChild(renderCadastro(sec));
+  else if(sec.type==="table-opps") content.appendChild(renderOpps());
+  else if(sec.type==="table-actions") content.appendChild(renderActions());
+  else if(sec.type==="insights") content.appendChild(renderInsights());
+  else content.appendChild(renderSection(sec));
+
+  updateKPIs();
+}
+
+function renderCadastro(sec){
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `<h2>Cadastro</h2><p>Com <b>Privacidade ON</b>, esses campos são mascarados ao enviar para IA.</p>`;
+  sec.fields.forEach(f=>{
+    const div = document.createElement("div");
+    div.className="field";
+    div.style.marginTop="10px";
+    div.innerHTML = `
+      <label>${escapeHtml(f.label)}</label>
+      <input type="text" value="${escapeHtml(state.cadastro[f.id]||"")}" placeholder="${escapeHtml(f.placeholder||"")}" />
+    `;
+    div.querySelector("input").addEventListener("input",(e)=>{
+      state.cadastro[f.id]=e.target.value;
+      saveAnswers();
+    });
+    wrap.appendChild(div);
+  });
+  wrap.appendChild(el(`<div class="hint">Dica: cole a URL da logo do cliente para aparecer no relatório.</div>`));
+  return wrap;
+}
+
+function renderSection(sec){
+  const wrap = document.createElement("div");
+  wrap.appendChild(el(`<h2>${escapeHtml(sec.title)}</h2><p>${escapeHtml(sec.subtitle||"")}</p>`));
+
+  sec.blocks.forEach(block=>{
+    const b = document.createElement("div");
+    b.className = "q";
+    b.appendChild(el(`<div class="qtitle">${escapeHtml(block.title)}</div><div class="hint">${block.questions.length} perguntas</div>`));
+
+    block.questions.forEach(qDef=>{
+      const qObj = state.answers[qDef.id] || {...qDef};
+      const qEl = document.createElement("div");
+      qEl.className = "q";
+      qEl.innerHTML = `
+        <div class="qtitle">${escapeHtml(qObj.text)}</div>
+        <div class="hint">ID: <span style="font-family:var(--mono)">${escapeHtml(qObj.id)}</span></div>
+
+        <div class="field" style="margin-top:10px">
+          <label>Nível atual</label>
+          <div class="radioGroup">
+            ${DIAG.scale.map(s=>`
+              <div class="radioBtn ${qObj.answerKey===s.key?'active':''}" data-q="${qObj.id}" data-level="${s.key}">
+                <span style="width:10px;height:10px;border-radius:999px;background:${s.color};display:inline-block"></span>
+                <span>${escapeHtml(s.label)}</span>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Importância</label>
+            <select data-imp="${qObj.id}">
+              ${DIAG.importance.map(v=>`<option ${qObj.importance===v?'selected':''}>${escapeHtml(v)}</option>`).join("")}
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Deficiências (marque 1 ou mais)</label>
+            <div class="checkRow">
+              ${DIAG.deficiencies.map(d=>`
+                <label class="check">
+                  <input type="checkbox" data-def="${qObj.id}" value="${escapeHtml(d)}" ${qObj.deficiencies?.includes(d)?'checked':''} />
+                  <span>${escapeHtml(d)}</span>
+                </label>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:10px">
+          <label>Observações (manual)</label>
+          <textarea data-notes="${qObj.id}" placeholder="Evidências, contexto e exemplos...">${escapeHtml(qObj.notes||"")}</textarea>
+          <div class="hint">
+            <button class="btn" onclick="suggestNote('${escapeJs(qObj.id)}')">Sugerir observação (IA)</button>
+            <span class="muted">— você pode editar livremente.</span>
+          </div>
+          ${qObj.aiNotes ? `<div class="hint"><b>Sugestão IA (última):</b> ${escapeHtml(qObj.aiNotes)}</div>` : ``}
+        </div>
+      `;
+
+      qEl.querySelectorAll(".radioBtn").forEach(elr=>{
+        elr.addEventListener("click", ()=>{
+          const qid = elr.dataset.q, lvl = elr.dataset.level;
+          state.answers[qid] = state.answers[qid] || {...qObj};
+          state.answers[qid].answerKey = lvl;
+          saveAnswers(); render();
         });
+      });
 
-        // Render sidebar navigation
-        function renderSidebar() {
-            const sectionList = document.getElementById('section-list');
-            sectionList.innerHTML = '';
-            state.sections.forEach(section => {
-                const listItem = document.createElement('li');
-                const link = document.createElement('a');
-                link.href = `#${section.id}`;
-                link.textContent = section.name;
-                link.onclick = (e) => {
-                    e.preventDefault();
-                    loadSection(section.id);
-                };
-                listItem.appendChild(link);
-                sectionList.appendChild(listItem);
-            });
-            updateSidebarActiveLink();
-        }
+      qEl.querySelector(`select[data-imp="${qObj.id}"]`).addEventListener("change",(e)=>{
+        state.answers[qObj.id] = state.answers[qObj.id] || {...qObj};
+        state.answers[qObj.id].importance = e.target.value;
+        saveAnswers(); toast("Importância salva.");
+      });
 
-        // Update active link in sidebar
-        function updateSidebarActiveLink() {
-            const links = document.querySelectorAll('#section-list a');
-            links.forEach(link => {
-                if (link.getAttribute('href') === `#${state.currentSection}`) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
-        }
-
-        // Load questions for a specific section
-        function loadSection(sectionId) {
-            state.currentSection = sectionId;
-            saveState();
-            updateSidebarActiveLink();
-
-            const questionContent = document.getElementById('question-content');
-            questionContent.innerHTML = '';
-
-            const currentSectionData = state.sections.find(s => s.id === sectionId);
-            if (!currentSectionData) return;
-
-            const sectionTitle = document.createElement('h2');
-            sectionTitle.textContent = currentSectionData.name;
-            questionContent.appendChild(sectionTitle);
-
-            currentSectionData.questions.forEach(q => {
-                const questionItem = document.createElement('div');
-                questionItem.className = 'question-item';
-                questionItem.id = `question-${q.id}`;
-
-                const label = document.createElement('label');
-                label.htmlFor = `${sectionId}-${q.id}`;
-                label.textContent = q.text;
-                questionItem.appendChild(label);
-
-                if (q.type === 'select') {
-                    const select = document.createElement('select');
-                    select.id = `${sectionId}-${q.id}`;
-                    q.options.forEach((optionText, index) => {
-                        const option = document.createElement('option');
-                        option.value = index; // Use index as value to map to score
-                        option.textContent = optionText;
-                        select.appendChild(option);
-                    });
-                    select.value = state.answers[sectionId]?.[q.id]?.value !== undefined ? state.answers[sectionId][q.id].value : 0;
-                    select.onchange = (e) => {
-                        saveAnswer(sectionId, q.id, e.target.value, q.score ? q.score[e.target.value] : 0);
-                        updateScoreDisplay(sectionId, q.id);
-                    };
-                    questionItem.appendChild(select);
-
-                    const scoreDisplay = document.createElement('div');
-                    scoreDisplay.className = 'score-display';
-                    scoreDisplay.id = `score-${sectionId}-${q.id}`;
-                    questionItem.appendChild(scoreDisplay);
-                    updateScoreDisplay(sectionId, q.id);
-
-                    const aiSuggestion = document.createElement('div');
-                    aiSuggestion.className = 'ai-suggestion';
-                    aiSuggestion.id = `ai-suggestion-${sectionId}-${q.id}`;
-                    aiSuggestion.style.display = 'none'; // Hidden by default
-                    questionItem.appendChild(aiSuggestion);
-
-                    const suggestButton = document.createElement('button');
-                    suggestButton.textContent = 'Sugerir Nota (IA)';
-                    suggestButton.onclick = () => suggestScore(sectionId, q.id);
-                    questionItem.appendChild(suggestButton);
-
-                } else if (q.type === 'textarea') {
-                    const textarea = document.createElement('textarea');
-                    textarea.id = `${sectionId}-${q.id}`;
-                    textarea.placeholder = 'Digite sua resposta aqui...';
-                    textarea.value = state.answers[sectionId]?.[q.id]?.text || '';
-                    textarea.oninput = (e) => saveAnswer(sectionId, q.id, e.target.value);
-                    questionItem.appendChild(textarea);
-
-                    const aiSuggestion = document.createElement('div');
-                    aiSuggestion.className = 'ai-suggestion';
-                    aiSuggestion.id = `ai-suggestion-${sectionId}-${q.id}`;
-                    aiSuggestion.style.display = 'none'; // Hidden by default
-                    questionItem.appendChild(aiSuggestion);
-
-                    const generateButton = document.createElement('button');
-                    generateButton.textContent = 'Gerar Resposta (IA)';
-                    generateButton.onclick = () => generateTextAnswer(sectionId, q.id);
-                    questionItem.appendChild(generateButton);
-                }
-
-                questionContent.appendChild(questionItem);
-            });
-        }
-
-        // Save answer to state
-        function saveAnswer(sectionId, questionId, value, score = null) {
-            if (!state.answers[sectionId]) {
-                state.answers[sectionId] = {};
-            }
-            if (score !== null) {
-                state.answers[sectionId][questionId] = { value: value, score: score };
-            } else {
-                state.answers[sectionId][questionId] = { text: value };
-            }
-            saveState();
-        }
-
-        // Update score display for select questions
-        function updateScoreDisplay(sectionId, questionId) {
-            const scoreDisplay = document.getElementById(`score-${sectionId}-${questionId}`);
-            if (scoreDisplay) {
-                const answer = state.answers[sectionId]?.[questionId];
-                if (answer && answer.score !== undefined) {
-                    scoreDisplay.textContent = `Pontuação: ${answer.score}`;
-                } else {
-                    scoreDisplay.textContent = 'Pontuação: 0';
-                }
-            }
-        }
-
-        // Calculate total score for a section
-        function getSectionScore(sectionId) {
-            const sectionData = state.sections.find(s => s.id === sectionId);
-            if (!sectionData) return { total: 0, max: 0 };
-
-            let totalScore = 0;
-            let maxScore = 0;
-
-            sectionData.questions.forEach(q => {
-                if (q.type === 'select' && q.score) {
-                    maxScore += Math.max(...q.score); // Max possible score for this question
-                    const answer = state.answers[sectionId]?.[q.id];
-                    if (answer && answer.score !== undefined) {
-                        totalScore += answer.score;
-                    }
-                }
-            });
-            return { total: totalScore, max: maxScore };
-        }
-
-        // Display toast messages
-        function toast(message) {
-            const toastElement = document.getElementById('toast');
-            toastElement.textContent = message;
-            toastElement.classList.add('show');
-            setTimeout(() => {
-                toastElement.classList.remove('show');
-            }, 3000);
-        }
-
-        // AI Integration
-        async function callOpenAI(prompt) {
-            if (!state.ai.openaiKey) {
-                throw new Error('OpenAI API Key não configurada. Clique em "Configurar IA" primeiro.');
-            }
-            const url = 'https://api.openai.com/v1/chat/completions';
-            const response = await fetch(url, {
-                method: 'POST',<br/>
-                headers: {<br/>
-                    'Content-Type': 'application/json',<br/>
-                    'Authorization': `Bearer ${state.ai.openaiKey}`
-                },
-                body: JSON.stringify({<br/>
-                    model: 'gpt-3.5-turbo',<br/>
-                    messages: [{ role: 'user', content: prompt }],<br/>
-                    temperature: 0.7,<br/>
-                    max_tokens: 500
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`OpenAI error ${response.status}: ${errorData.error.message}`);
-            }
-
-            const data = await response.json();
-            return data.choices[0].message.content;
-        }
-
-        async function callGemini (prompt){
-            const apiKey = state.ai.geminiKey;
-            if (!apiKey) {
-                throw new Error('Gemini key não configurada. Clique em "Configurar IA" primeiro.');
-            }
-            
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-            
-            const res = await fetch(url, {
-                method: "POST", <br/>
-                headers: { "Content-Type": "application/json" },<br/>
-                body: JSON.stringify({ <br/>
-                    contents: [{role:"user", parts: [{text:prompt}]}], <br/>
-                    generationConfig: {temperature:0.3} 
-                })
-            });
-            
-            if(!res.ok) throw new Error("Gemini error "+res.status);
-            const data = await res.json();
-            return data.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("") || "";
-        }
-
-        async function callAI(prompt) {
-            if (state.ai.backendEndpoint) {
-                // Use backend for AI calls if configured
-                const response = await fetch(state.ai.backendEndpoint, {
-                    method: 'POST',<br/>
-                    headers: { 'Content-Type': 'application/json' },<br/>
-                    body: JSON.stringify({ model: state.ai.model, prompt: prompt, apiKey: state.ai.model === 'openai' ? state.ai.openaiKey : state.ai.geminiKey })
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`Backend AI error ${response.status}: ${errorData.message}`);
-                }
-                const data = await response.json();
-                return data.response;
-            } else {
-                // Use direct API calls
-                if (state.ai.model === 'gemini') {
-                    return callGemini(prompt);
-                } else if (state.ai.model === 'openai') {
-                    return callOpenAI(prompt);
-                }
-            }
-            throw new Error('Nenhum modelo de IA selecionado ou configurado.');
-        }
-
-        async function suggestScore(sectionId, questionId) {
-            const questionData = state.sections.find(s => s.id === sectionId).questions.find(q => q.id === questionId);
-            const aiSuggestionDiv = document.getElementById(`ai-suggestion-${sectionId}-${questionId}`);
-            const selectElement = document.getElementById(`${sectionId}-${questionId}`);
-
-            aiSuggestionDiv.innerHTML = '<p><strong>IA:</strong> Gerando sugestão...</p>';
-            aiSuggestionDiv.style.display = 'block';
-
-            try {
-                const prompt = `A pergunta é: "${questionData.text}". As opções de resposta são: ${questionData.options.join(', ')}. As pontuações correspondentes são: ${questionData.score.join(', ')}. Baseado na pergunta, qual seria a pontuação mais adequada (0, 1, 3 ou 5)? Responda apenas com o número da pontuação.`;
-                const aiResponse = await callAI(prompt);
-                const suggestedScore = parseInt(aiResponse.trim());
-
-                if (!isNaN(suggestedScore) && questionData.score.includes(suggestedScore)) {
-                    const optionIndex = questionData.score.indexOf(suggestedScore);
-                    selectElement.value = optionIndex;
-                    saveAnswer(sectionId, questionId, optionIndex, suggestedScore);
-                    updateScoreDisplay(sectionId, questionId);
-                    aiSuggestionDiv.innerHTML = `<p><strong>IA Sugere:</strong> ${questionData.options[optionIndex]} (Pontuação: ${suggestedScore})</p><button onclick="applySuggestion('${sectionId}', '${questionId}', ${optionIndex}, ${suggestedScore})">Aplicar</button>`;
-                } else {
-                    aiSuggestionDiv.innerHTML = `<p><strong>IA:</strong> Não foi possível gerar uma sugestão válida. Resposta da IA: "${aiResponse}"</p>`;
-                }
-            } catch (error) {
-                console.error('Erro ao sugerir nota com IA:', error);<br/>
-                aiSuggestionDiv.innerHTML = `<p style="color: red;"><strong>Erro ao sugerir:</strong> ${error.message}</p>`;
-            }
-        }
-
-        function applySuggestion(sectionId, questionId, value, score) {
-            const selectElement = document.getElementById(`${sectionId}-${questionId}`);
-            selectElement.value = value;
-            saveAnswer(sectionId, questionId, value, score);
-            updateScoreDisplay(sectionId, questionId);
-            document.getElementById(`ai-suggestion-${sectionId}-${questionId}`).style.display = 'none';
-            toast('Sugestão da IA aplicada!');
-        }
-
-        async function generateTextAnswer(sectionId, questionId) {
-            const questionData = state.sections.find(s => s.id === sectionId).questions.find(q => q.id === questionId);
-            const aiSuggestionDiv = document.getElementById(`ai-suggestion-${sectionId}-${questionId}`);
-            const textareaElement = document.getElementById(`${sectionId}-${questionId}`);
-
-            aiSuggestionDiv.innerHTML = '<p><strong>IA:</strong> Gerando resposta...</p>';
-            aiSuggestionDiv.style.display = 'block';
-
-            try {
-                const prompt = `A pergunta é: "${questionData.text}". Gere uma resposta concisa e relevante para esta pergunta, como se fosse a resposta de uma empresa.`;
-                const aiResponse = await callAI(prompt);
-                
-                aiSuggestionDiv.innerHTML = `<p><strong>IA Sugere:</strong> ${aiResponse}</p><button onclick="applyTextSuggestion('${sectionId}', '${questionId}', \`${aiResponse.replace(/`/g, '\`')}\`)">Aplicar</button>`;
-            } catch (error) {
-                console.error('Erro ao gerar resposta com IA:', error);<br/>
-                aiSuggestionDiv.innerHTML = `<p style="color: red;"><strong>Erro ao gerar:</strong> ${error.message}</p>`;
-            }
-        }
-
-        function applyTextSuggestion(sectionId, questionId, text) {
-            const textareaElement = document.getElementById(`${sectionId}-${questionId}`);
-            textareaElement.value = text;
-            saveAnswer(sectionId, questionId, text);
-            document.getElementById(`ai-suggestion-${sectionId}-${questionId}`).style.display = 'none';
-            toast('Sugestão da IA aplicada!');
-        }
-
-        // Configure AI API Keys
-        function openConfig(){
-            const openaiKey = prompt("Cole sua OpenAI API Key (vazio mantém atual):", "");
-            if(openaiKey !== null && openaiKey.trim()) state.ai.openaiKey = openaiKey.trim();
-            const geminiKey = prompt("Cole sua Gemini API Key (vazio mantém atual):", "");
-            if(geminiKey !== null && geminiKey.trim()) state.ai.geminiKey = geminiKey.trim();
-            const endpoint = prompt("Endpoint backend (recomendado em produção). Vazio = DEV no browser:", state.ai.backendEndpoint || "");
-            if(endpoint !== null) state.ai.backendEndpoint = endpoint.trim();
-            saveConfig();
-            toast("Config IA salva.");
-        }
-
-        function saveConfig() {
-            localStorage.setItem('diagnosticoEmpresarialState', JSON.stringify(state));
-        }
-
-        document.getElementById('aiModelSelect').addEventListener('change', (e) => {
-            state.ai.model = e.target.value;
-            saveState();
-            toast(`Modelo de IA alterado para ${state.ai.model.toUpperCase()}`);
+      qEl.querySelectorAll(`input[data-def="${qObj.id}"]`).forEach(ch=>{
+        ch.addEventListener("change",(e)=>{
+          const cur = new Set(state.answers[qObj.id]?.deficiencies || qObj.deficiencies || []);
+          if(e.target.checked) cur.add(e.target.value); else cur.delete(e.target.value);
+          state.answers[qObj.id] = state.answers[qObj.id] || {...qObj};
+          state.answers[qObj.id].deficiencies = Array.from(cur);
+          saveAnswers(); toast("Deficiências salvas.");
         });
+      });
 
-        // Generate overall insights
-        async function generateInsights() {
-            toast('Gerando insights com IA... Aguarde.');
-            const insightsContent = document.createElement('div');
-            insightsContent.className = 'results';
-            insightsContent.innerHTML = '<h2>Resultados e Insights da IA</h2>';
+      qEl.querySelector(`textarea[data-notes="${qObj.id}"]`).addEventListener("input",(e)=>{
+        state.answers[qObj.id] = state.answers[qObj.id] || {...qObj};
+        state.answers[qObj.id].notes = e.target.value;
+        saveAnswers();
+      });
 
-            const summaryDiv = document.createElement('div');
-            summaryDiv.className = 'results-summary';
-            insightsContent.appendChild(summaryDiv);
+      b.appendChild(qEl);
+    });
 
-            const opportunitiesDiv = document.createElement('div');
-            opportunitiesDiv.className = 'detail-card';
-            opportunitiesDiv.innerHTML = '<h3>Oportunidades de Melhoria</h3><p>Gerando...</p>';
-            insightsContent.appendChild(opportunitiesDiv);
+    wrap.appendChild(b);
+  });
 
-            const actionsDiv = document.createElement('div');
-            actionsDiv.className = 'detail-card';
-            actionsDiv.innerHTML = '<h3>Ações Recomendadas</h3><p>Gerando...</p>';
-            insightsContent.appendChild(actionsDiv);
+  return wrap;
+}
 
-            const questionContent = document.getElementById('question-content');
-            questionContent.innerHTML = ''; // Clear current questions
-            questionContent.appendChild(insightsContent);
+function renderOpps(){
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Oportunidades</h2>
+    <p>Você pode preencher manualmente ou usar <b>Aplicar sugestões</b> após gerar insights.</p>
+    <div class="hint"><button class="btn primary" onclick="applySuggestions()">Aplicar sugestões (da IA)</button></div>
+    <div class="hr"></div>
+  `;
+  if(!state.opportunities.length){
+    wrap.appendChild(el(`<div class="small">Nenhuma oportunidade cadastrada ainda.</div>`));
+  }else{
+    state.opportunities.forEach((o,i)=>{
+      wrap.appendChild(el(`
+        <div class="stat">
+          <div>
+            <div style="font-weight:900">${escapeHtml(o.title||("Oportunidade "+(i+1)))}</div>
+            <div class="small">${escapeHtml(o.area||"")} • Impacto: ${escapeHtml(o.impact||"")} • Esforço: ${escapeHtml(o.effort||"")}</div>
+          </div>
+          <button class="btn" onclick="removeOpp(${i})">Remover</button>
+        </div>
+      `));
+    });
+  }
+  return wrap;
+}
 
-            try {
-                const fullReport = generateFullReportText();
-                const promptSummary = `Analise o seguinte diagnóstico empresarial e forneça um resumo conciso da situação geral da empresa, destacando pontos fortes e fracos. Use no máximo 150 palavras. Diagnóstico: ${fullReport}`;<br/>
-                const promptOpportunities = `Com base no seguinte diagnóstico empresarial, liste 3 a 5 oportunidades de melhoria específicas e acionáveis para a empresa. Use formato de lista. Diagnóstico: ${fullReport}`;<br/>
-                const promptActions = `Com base no seguinte diagnóstico empresarial, liste 3 a 5 ações recomendadas detalhadas para a empresa, com foco em como implementar as melhorias. Use formato de lista. Diagnóstico: ${fullReport}`;
+function renderActions(){
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Plano de ação</h2>
+    <p>Ações sugeridas pela IA podem ser aplicadas automaticamente. Você pode editar depois.</p>
+    <div class="hint"><button class="btn primary" onclick="applySuggestions()">Aplicar sugestões (da IA)</button></div>
+    <div class="hr"></div>
+  `;
+  if(!state.actions.length){
+    wrap.appendChild(el(`<div class="small">Nenhuma ação cadastrada ainda.</div>`));
+  }else{
+    state.actions.forEach((a,i)=>{
+      wrap.appendChild(el(`
+        <div class="stat">
+          <div>
+            <div style="font-weight:900">${escapeHtml(a.action||("Ação "+(i+1)))}</div>
+            <div class="small">${escapeHtml(a.owner||"")} • Prazo: ${escapeHtml(a.due||"")} • Custo: ${escapeHtml(a.cost||"")}</div>
+          </div>
+          <button class="btn" onclick="removeAction(${i})">Remover</button>
+        </div>
+      `));
+    });
+  }
+  return wrap;
+}
 
-                const [summary, opportunities, actions] = await Promise.all([
-                    callAI(promptSummary),
-                    callAI(promptOpportunities),
-                    callAI(promptActions)
-                ]);
+function renderInsights(){
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Insights (IA)</h2>
+    <p>Gere insights para obter recomendações e preencher Oportunidades/Ações.</p>
+    <div class="hint">
+      <button class="btn primary" onclick="generateInsights()">Gerar insights</button>
+      <button class="btn" onclick="applySuggestions()">Aplicar sugestões</button>
+    </div>
+    <div class="hr"></div>
+  `;
+  wrap.appendChild(el(`<div style="white-space:pre-wrap;line-height:1.5">${escapeHtml(state.insights.text || "Ainda não foi gerado.")}</div>`));
+  return wrap;
+}
 
-                // Overall Score Card
-                const totalScore = state.sections.reduce((acc, section) => {
-                    const { total } = getSectionScore(section.id);
-                    return acc + total;
-                }, 0);
-                const maxPossibleScore = state.sections.reduce((acc, section) => {
-                    const { max } = getSectionScore(section.id);
-                    return acc + max;
-                }, 0);
-                const percentageScore = maxPossibleScore > 0 ? ((totalScore / maxPossibleScore) * 100).toFixed(2) : 0;
+/** =========================
+ *  ADMIN PANEL
+ *  ========================= */
+function renderAdmin(){
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h2>Painel Admin</h2>
+    <p>Adicione/remova seções, blocos e perguntas. As alterações ficam salvas no seu navegador (LocalStorage).</p>
 
-                const scoreCard = document.createElement('div');
-                scoreCard.className = 'summary-card';
-                scoreCard.innerHTML = `<h3>Pontuação Geral</h3><p>Total: ${totalScore} / ${maxPossibleScore}</p><p>Percentual: ${percentageScore}%</p>`;
-                summaryDiv.appendChild(scoreCard);
+    <div class="row">
+      <div class="field">
+        <label>Importar perguntas (JSON)</label>
+        <textarea id="importJson" placeholder='Cole aqui um JSON no formato do DIAG (sections/blocks/questions)...'></textarea>
+        <div class="hint">
+          <button class="btn" onclick="importQuestions()">Importar JSON</button>
+          <button class="btn" onclick="resetQuestions()">Restaurar padrão</button>
+        </div>
+      </div>
 
-                // Summary Card
-                const summaryCard = document.createElement('div');
-                summaryCard.className = 'summary-card';
-                summaryCard.innerHTML = `<h3>Resumo Geral da IA</h3><p>${summary}</p>`;
-                summaryDiv.appendChild(summaryCard);
+      <div class="field">
+        <label>Config Admin</label>
+        <div class="stat">
+          <div>
+            <div style="font-weight:900">PIN do Admin</div>
+            <div class="small">Opcional. Para alterar: clique abaixo.</div>
+          </div>
+          <button class="btn" onclick="changeAdminPin()">Alterar PIN</button>
+        </div>
+        <div class="hr"></div>
+        <div class="stat">
+          <div>
+            <div style="font-weight:900">Exportar</div>
+            <div class="small">Baixe o JSON das perguntas para versionar no GitHub.</div>
+          </div>
+          <button class="btn" onclick="exportQuestions()">Baixar JSON</button>
+        </div>
+      </div>
+    </div>
 
-                opportunitiesDiv.innerHTML = `<h3>Oportunidades de Melhoria</h3>${formatAIResponseAsList(opportunities)}`;
-                actionsDiv.innerHTML = `<h3>Ações Recomendadas</h3>${formatAIResponseAsList(actions)}`;
+    <div class="hr"></div>
 
-                toast('Insights gerados com sucesso!');
+    <div class="field">
+      <label>Gerenciar Seções</label>
+      <div class="hint">
+        <button class="btn primary" onclick="addSection()">+ Nova seção</button>
+      </div>
+      <div id="adminSections"></div>
+    </div>
+  `;
 
-            } catch (error) {
-                console.error('Erro ao gerar insights:', error);<br/>
-                questionContent.innerHTML = `<h2 style="color: red;">Erro ao Gerar Insights</h2><p style="color: red;">Não foi possível gerar os insights. Verifique sua chave de API e tente novamente. Detalhes do erro: ${error.message}</p>`;
-                toast('Erro ao gerar insights!');
-            }
+  setTimeout(()=>renderAdminSections(),0);
+  return wrap;
+}
+
+function renderAdminSections(){
+  const host = document.getElementById("adminSections");
+  if(!host) return;
+  host.innerHTML = "";
+
+  DIAG.sections
+    .filter(s => !["cadastro","oportunidades","acoes","insights","admin"].includes(s.id))
+    .forEach(sec=>{
+      const secDiv = el(`
+        <div class="stat">
+          <div>
+            <div style="font-weight:900">${escapeHtml(sec.title)} <span class="adminTag">${escapeHtml(sec.id)}</span></div>
+            <div class="small">${escapeHtml(sec.subtitle||"")}</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+            <button class="btn" onclick="addBlock('${escapeJs(sec.id)}')">+ Bloco</button>
+            <button class="btn" onclick="editSection('${escapeJs(sec.id)}')">Editar</button>
+            <button class="btn danger" onclick="removeSection('${escapeJs(sec.id)}')">Remover</button>
+          </div>
+        </div>
+      `);
+
+      // blocos
+      (sec.blocks||[]).forEach(b=>{
+        const bDiv = el(`
+          <div class="stat" style="margin-left:18px">
+            <div>
+              <div style="font-weight:900">${escapeHtml(b.title)} <span class="adminTag">${escapeHtml(b.id)}</span></div>
+              <div class="small">${(b.questions||[]).length} perguntas</div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+              <button class="btn" onclick="addQuestion('${escapeJs(sec.id)}','${escapeJs(b.id)}')">+ Pergunta</button>
+              <button class="btn" onclick="editBlock('${escapeJs(sec.id)}','${escapeJs(b.id)}')">Editar</button>
+              <button class="btn danger" onclick="removeBlock('${escapeJs(sec.id)}','${escapeJs(b.id)}')">Remover</button>
+            </div>
+          </div>
+        `);
+
+        // perguntas (preview)
+        (b.questions||[]).slice(0,4).forEach(q=>{
+          bDiv.appendChild(el(`
+            <div class="small" style="margin-left:22px;margin-top:6px">
+              • <span style="font-family:var(--mono)">${escapeHtml(q.id)}</span> — ${escapeHtml(q.text)}
+              <button class="btn" style="padding:4px 8px;margin-left:10px" onclick="editQuestion('${escapeJs(sec.id)}','${escapeJs(b.id)}','${escapeJs(q.id)}')">Editar</button>
+              <button class="btn danger" style="padding:4px 8px" onclick="removeQuestion('${escapeJs(sec.id)}','${escapeJs(b.id)}','${escapeJs(q.id)}')">Remover</button>
+            </div>
+          `));
+        });
+        if((b.questions||[]).length > 4){
+          bDiv.appendChild(el(`<div class="small" style="margin-left:22px;margin-top:6px;color:#6b7280">… e mais ${(b.questions.length-4)} perguntas</div>`));
         }
 
-        function generateFullReportText() {
-            let report = "Diagnóstico Empresarial:\n\n";
-            state.sections.forEach(section => {
-                report += `## ${section.name}\n`;
-                section.questions.forEach(q => {
-                    const answer = state.answers[section.id]?.[q.id];
-                    if (q.type === 'select') {
-                        const selectedOption = answer?.value !== undefined ? q.options[answer.value] : 'Não respondido';<br/>
-                        const score = answer?.score !== undefined ? answer.score : 0;<br/>
-                        report += ` - ${q.text}: ${selectedOption} (Pontuação: ${score})\n`;
-                    } else if (q.type === 'textarea') {
-                        const textAnswer = answer?.text || 'Não respondido';
-                        report += ` - ${q.text}: ${textAnswer}\n`;
-                    }
-                });
-                report += '\n';
-            });
-            return report;
-        }
+        secDiv.appendChild(bDiv);
+      });
 
-        function formatAIResponseAsList(text) {
-            // Split by common list delimiters like numbers, hyphens, or newlines
-            const items = text.split(/(\d+\.\s*|\*\s*|-\s*)/).filter(item => item.trim() !== '');
-            let formattedList = '<ul>';
-            let currentItem = '';
+      host.appendChild(secDiv);
+    });
+}
 
-            items.forEach(item => {
-                const trimmedItem = item.trim();
-                if (trimmedItem.match(/^\d+\.$/) || trimmedItem.match(/^\*$/) || trimmedItem.match(/^-$/)) {
-                    // It's a list marker, start new item if current one is not empty
-                    if (currentItem) {
-                        formattedList += `<li>${currentItem.replace(/^-?\s*\d*\.?\s*/, '')}</li>`;
-                        currentItem = '';
-                    }
-                } else {
-                    currentItem += trimmedItem + ' ';
-                }
-            });
-            if (currentItem) {
-                formattedList += `<li>${currentItem.replace(/^-?\s*\d*\.?\s*/, '')}</li>`;
-            }
-            formattedList += '</ul>';
-            
-            // Fallback if simple split doesn't work well (e.g., plain paragraph)
-            if (formattedList === '<ul></ul>' && text.trim() !== '') {
-                return `<p>${text}</p>`;
-            }
+/** Admin actions */
+function addSection(){
+  const id = prompt("ID da seção (sem espaços, ex: marketing):","");
+  if(!id) return;
+  const title = prompt("Título da seção:","Nova seção");
+  if(!title) return;
+  const subtitle = prompt("Subtítulo/descrição:","") || "";
+  DIAG.sections.splice(DIAG.sections.findIndex(s=>s.id==="oportunidades"), 0, {id, title, subtitle, blocks:[]});
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); toast("Seção criada.");
+  buildNav();
+}
+function editSection(secId){
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  const title = prompt("Título:", sec.title); if(title!==null) sec.title=title;
+  const subtitle = prompt("Subtítulo:", sec.subtitle||""); if(subtitle!==null) sec.subtitle=subtitle;
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); buildNav(); toast("Seção atualizada.");
+}
+function removeSection(secId){
+  if(!confirm("Remover seção e todos os blocos/perguntas?")) return;
+  DIAG.sections = DIAG.sections.filter(s=>s.id!==secId);
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); buildNav(); toast("Seção removida.");
+}
+function addBlock(secId){
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  const id = prompt("ID do bloco (ex: planejamento):",""); if(!id) return;
+  const title = prompt("Título do bloco:", "Novo bloco"); if(!title) return;
+  sec.blocks = sec.blocks || [];
+  sec.blocks.push({id, title, questions:[]});
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); toast("Bloco criado.");
+}
+function editBlock(secId, blockId){
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  const b = (sec.blocks||[]).find(x=>x.id===blockId); if(!b) return;
+  const title = prompt("Título do bloco:", b.title); if(title!==null) b.title=title;
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); toast("Bloco atualizado.");
+}
+function removeBlock(secId, blockId){
+  if(!confirm("Remover bloco e todas as perguntas?")) return;
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  sec.blocks = (sec.blocks||[]).filter(b=>b.id!==blockId);
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); toast("Bloco removido.");
+}
+function addQuestion(secId, blockId){
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  const b = (sec.blocks||[]).find(x=>x.id===blockId); if(!b) return;
+  const id = prompt("ID da pergunta (único) ex: MKT-PLA-01:","");
+  if(!id) return;
+  const text = prompt("Texto da pergunta:",""); if(!text) return;
+  b.questions = b.questions || [];
+  b.questions.push(mkQ(id, text));
+  saveQuestions(); hydrateAnswers(); renderAdminSections(); toast("Pergunta adicionada.");
+}
+function editQuestion(secId, blockId, qId){
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  const b = (sec.blocks||[]).find(x=>x.id===blockId); if(!b) return;
+  const q = (b.questions||[]).find(x=>x.id===qId); if(!q) return;
+  const newText = prompt("Editar texto:", q.text);
+  if(newText===null) return;
+  q.text = newText;
+  // atualiza texto também no mapa de respostas
+  if(state.answers[qId]) state.answers[qId].text = newText;
+  saveQuestions(); saveAnswers(); renderAdminSections(); toast("Pergunta atualizada.");
+}
+function removeQuestion(secId, blockId, qId){
+  if(!confirm("Remover pergunta?")) return;
+  const sec = DIAG.sections.find(s=>s.id===secId); if(!sec) return;
+  const b = (sec.blocks||[]).find(x=>x.id===blockId); if(!b) return;
+  b.questions = (b.questions||[]).filter(x=>x.id!==qId);
+  // opcional: manter resposta antiga no storage (não atrapalha), ou remover:
+  delete state.answers[qId];
+  saveQuestions(); saveAnswers(); renderAdminSections(); toast("Pergunta removida.");
+}
 
-            return formattedList;
-        }
+function importQuestions(){
+  const txt = document.getElementById("importJson")?.value?.trim();
+  if(!txt) return toast("Cole um JSON primeiro.");
+  try{
+    const obj = JSON.parse(txt);
+    if(!obj.sections) throw new Error("JSON sem 'sections'");
+    DIAG = obj;
+    saveQuestions(); hydrateAnswers();
+    buildNav(); toast("Perguntas importadas.");
+    renderAdminSections();
+  }catch(e){
+    console.error(e);
+    toast("Falha ao importar JSON. Ver console.");
+  }
+}
+function resetQuestions(){
+  if(!confirm("Restaurar perguntas padrão?")) return;
+  DIAG = JSON.parse(JSON.stringify(DEFAULT_DIAG));
+  saveQuestions(); hydrateAnswers();
+  buildNav(); render(); toast("Restaurado.");
+}
+function changeAdminPin(){
+  const pin = prompt("Novo PIN (vazio = sem PIN):","");
+  if(pin===null) return;
+  localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, pin.trim());
+  toast("PIN atualizado.");
+}
 
-        // Export to PDF
-        async function exportToPDF() {
-            toast('Gerando PDF... Aguarde.');
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-            const content = document.querySelector('.content'); // Select the main content area
+/** =========================
+ *  KPIs
+ *  ========================= */
+function updateKPIs(){
+  const allIds = Object.keys(state.answers||{});
+  const total = allIds.length;
+  const answered = allIds.filter(id=>!!state.answers[id]?.answerKey).length;
+  const critical = allIds.filter(id=>state.answers[id]?.answerKey==="CRITICO").length;
 
-            // Temporarily hide buttons and interactive elements for cleaner PDF
-            const buttons = content.querySelectorAll('button, select');
-            buttons.forEach(btn => btn.style.display = 'none');
-            const aiSuggestions = content.querySelectorAll('.ai-suggestion');
-            aiSuggestions.forEach(sugg => sugg.style.display = 'none');
+  document.getElementById("kpiTotal").textContent = total;
+  document.getElementById("kpiAnswered").textContent = answered;
+  document.getElementById("kpiCritical").textContent = critical;
 
-            // Use html2canvas to render the content as an image
-            html2canvas(content, {
-                scale: 2, // Increase scale for better resolution<br/>
-                useCORS: true, // Important for images from external sources<br/>
-                windowWidth: content.scrollWidth,<br/>
-                windowHeight: content.scrollHeight
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const imgWidth = 210; // A4 width in mm
-                const pageHeight = 297; // A4 height in mm
-                const imgHeight = canvas.height * imgWidth / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 0;
+  const maturity = total ? Math.round(allIds.reduce((acc,id)=>{
+    const key = state.answers[id]?.answerKey;
+    const sc = DIAG.scale.find(s=>s.key===key)?.score ?? 0;
+    return acc + sc;
+  },0)/total) : 0;
 
-                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
+  document.getElementById("kpiMaturity").textContent = maturity ? (maturity+"%") : "—";
+}
 
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    doc.addPage();
-                    doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
+/** =========================
+ *  IA config
+ *  ========================= */
+document.getElementById("aiProvider").addEventListener("change",(e)=>{
+  state.ai.provider = e.target.value; saveConfig();
+  toast("IA: "+(state.ai.provider==="openai"?"OpenAI":"Gemini"));
+});
+document.getElementById("privacyMode").addEventListener("change",(e)=>{
+  state.ai.privacy = !!e.target.checked; saveConfig();
+  toast("Privacidade "+(state.ai.privacy?"ON":"OFF"));
+});
 
-                doc.save('diagnostico-empresarial.pdf');
-                toast('PDF gerado com sucesso!');
+function openConfig(){
+  const openaiKey = prompt("Cole sua OpenAI API Key (vazio mantém atual):", "");
+  if(openaiKey !== null && openaiKey.trim()) state.ai.openaiKey = openaiKey.trim();
 
-                // Restore hidden elements
-                buttons.forEach(btn => btn.style.display = '');
-                aiSuggestions.forEach(sugg => sugg.style.display = '');
+  const geminiKey = prompt("Cole sua Gemini API Key (vazio mantém atual):", "");
+  if(geminiKey !== null && geminiKey.trim()) state.ai.geminiKey = geminiKey.trim();
 
-            }).catch(error => {
-                console.error('Erro ao gerar PDF:', error);
-                toast('Erro ao gerar PDF!');
-                // Restore hidden elements even on error
-                buttons.forEach(btn => btn.style.display = '');
-                aiSuggestions.forEach(sugg => sugg.style.display = '');
-            });
-        }
+  const endpoint = prompt("Endpoint backend (recomendado em produção). Vazio = DEV no browser:", state.ai.backendEndpoint || "");
+  if(endpoint !== null) state.ai.backendEndpoint = endpoint.trim();
 
-        // Reset form
-        function resetForm() {
-            if (confirm('Tem certeza que deseja limpar todas as respostas e configurações?')) {
-                localStorage.removeItem('diagnosticoEmpresarialState');
-                state.answers = {};
-                state.ai.openaiKey = '';
-                state.ai.geminiKey = '';
-                state.ai.backendEndpoint = '';
-                state.ai.model = 'gemini'; // Reset to default
-                document.getElementById('aiModelSelect').value = 'gemini';
-                saveState();
-                loadSection(state.currentSection); // Reload current section to clear inputs
-                toast('Formulário e configurações limpos!');
-            }
-        }
-    </script>
+  saveConfig();
+  toast("Config IA salva.");
+}
+
+/** =========================
+ *  IA payload + calls
+ *  ========================= */
+function buildPayload(){
+  const cadastro = {...state.cadastro};
+  const answers = Object.values(state.answers||{}).map(q=>({
+    id:q.id, text:q.text, level:q.answerKey,
+    importance:q.importance, deficiencies:q.deficiencies, notes:q.notes
+  }));
+
+  if(state.ai.privacy){
+    if(cadastro.contato) cadastro.contato = "[MASCARADO]";
+  }
+
+  return {
+    cadastro,
+    answers,
+    meta:{ answered: answers.filter(a=>!!a.level).length, total: answers.length }
+  };
+}
+
+async function generateInsights(){
+  const payload = buildPayload();
+  if(payload.meta.answered < Math.ceil(payload.meta.total*0.2)){
+    toast("Preencha mais perguntas antes (mín. 20%).");
+    return;
+  }
+  toast("Gerando insights...");
+
+  const prompt = `
+Você é um consultor sênior de gestão. Analise o diagnóstico e gere:
+1) Resumo executivo (tom profissional).
+2) Top 5 pontos fortes e Top 5 gaps.
+3) Hipóteses de causa-raiz para os gaps.
+4) Recomendações priorizadas (impacto x esforço) com 6-10 oportunidades.
+5) Plano de ação 30/60/90 dias.
+Retorne também JSON:
+{"text":"...","opportunities":[{"title":"","area":"","impact":"","effort":"","urgency":"","why":""}],"actions":[{"action":"","owner":"","due":"","cost":"","relatedOpportunityTitle":"","notes":""}]}
+Diagnóstico:
+${JSON.stringify(payload,null,2)}
+`;
+  try{
+    const result = await callAI({task:"insights", prompt, payload});
+    const parsed = safeParseStructured(result);
+    state.insights.text = parsed.text || String(result);
+    state.insights.opportunities = parsed.opportunities || [];
+    state.insights.actions = parsed.actions || [];
+    saveAnswers();
+    toast("Insights gerados.");
+    go("insights");
+  }catch(e){
+    console.error(e);
+    toast("Erro ao gerar insights. Veja console.");
+  }
+}
+
+async function suggestNote(questionId){
+  const q = state.answers[questionId];
+  if(!q || !q.answerKey) return toast("Selecione um nível primeiro.");
+  toast("Gerando observação...");
+  const prompt = `
+Gere uma observação curta (2-5 linhas) para relatório profissional baseada na pergunta/resposta.
+Inclua: evidência provável, risco/impacto e sugestão imediata. Retorne apenas texto.
+Pergunta: ${q.text}
+Nível: ${q.answerKey}
+Importância: ${q.importance}
+Deficiências: ${(q.deficiencies||[]).join(", ")||"—"}
+Obs atual: ${q.notes||"—"}
+`;
+  try{
+    const result = await callAI({task:"note", prompt, payload:{questionId}});
+    q.aiNotes = String(result).trim();
+    if(!q.notes) q.notes = q.aiNotes;
+    saveAnswers();
+    render();
+    toast("Observação sugerida.");
+  }catch(e){
+    console.error(e);
+    toast("Erro ao sugerir observação.");
+  }
+}
+
+function applySuggestions(){
+  const opps = state.insights.opportunities || [];
+  const acts = state.insights.actions || [];
+  if(!opps.length && !acts.length) return toast("Gere insights primeiro.");
+  if(!confirm("Aplicar sugestões irá anexar oportunidades e ações. OK?")) return;
+  state.opportunities = state.opportunities.concat(opps);
+  state.actions = state.actions.concat(acts);
+  saveAnswers();
+  toast("Sugestões aplicadas.");
+  go("oportunidades");
+}
+
+function removeOpp(i){ state.opportunities.splice(i,1); saveAnswers(); render(); }
+function removeAction(i){ state.actions.splice(i,1); saveAnswers(); render(); }
+
+function resetAll(){
+  if(!confirm("Resetar diagnóstico? Isso apaga respostas, oportunidades, ações e insights.")) return;
+  Object.values(state.answers||{}).forEach(q=>{
+    q.answerKey=null; q.importance="Média"; q.deficiencies=[]; q.notes=""; q.aiNotes="";
+  });
+  state.cadastro={}; state.opportunities=[]; state.actions=[];
+  state.insights={text:"",opportunities:[],actions:[]};
+  saveAnswers();
+  toast("Reset concluído.");
+  go("cadastro");
+}
+
+async function callAI({task, prompt, payload}){
+  if(state.ai.backendEndpoint){
+    const res = await fetch(state.ai.backendEndpoint, {
+      method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({provider: state.ai.provider, task, prompt, payload})
+    });
+    if(!res.ok) throw new Error("Backend error "+res.status);
+    const data = await res.json();
+    return data.text ?? data.output ?? data;
+  }
+  // DEV (no browser)
+  if(state.ai.provider==="openai"){
+    if(!state.ai.openaiKey) throw new Error("OpenAI key não configurada.");
+    return await callOpenAI(prompt);
+  } else {
+    if(!state.ai.geminiKey) throw new Error("Gemini key não configurada.");
+    return await callGemini(prompt);
+  }
+}
+
+async function callOpenAI(prompt){
+  const res = await fetch("https://api.openai.com/v1/chat/completions",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+state.ai.openaiKey },
+    body: JSON.stringify({
+      model:"gpt-4.1-mini", temperature:0.3,
+      messages:[
+        {role:"system",content:"Você é um consultor empresarial sênior. Seja prático e estruturado."},
+        {role:"user",content:prompt}
+      ]
+    })
+  });
+  if(!res.ok) throw new Error("OpenAI error "+res.status);
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content || "";
+}
+
+async function callGemini (prompt){
+    const apiKey = localStorage.getItem('aiApiKey');
+    if (!apiKey) {
+        throw new Error('API Key não configurada. Clique em "Configurar IA" primeiro.');
+    }
+    
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    
+    const res = await fetch(url, {
+        method: "POST", 
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            contents: [{role:"user", parts: [{text:prompt}]}], 
+            generationConfig: {temperature:0.3} 
+        })
+    });
+    
+    if(!res.ok) throw new Error("Gemini error "+res.status);
+    const data = await res.json();
+    return data.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("") || "";
+}
+
+function safeParseStructured(text){
+  const raw = String(text||"");
+  const match = raw.match(/\{[\s\S]*\}/);
+  if(!match) return {text:raw, opportunities:[], actions:[]};
+  try{
+    const obj = JSON.parse(match[0]);
+    return { text: obj.text || raw, opportunities: obj.opportunities || [], actions: obj.actions || [] };
+  }catch{
+    return {text:raw, opportunities:[], actions:[]};
+  }
+}
+
+/** =========================
+ *  Export / Report
+ *  ========================= */
+function exportAnswers(){
+  const data = { generatedAt:new Date().toISOString(), cadastro:state.cadastro, answers:state.answers, opportunities:state.opportunities, actions:state.actions, insights:state.insights };
+  download("respostas_diagnostico.json", JSON.stringify(data,null,2), "application/json");
+  toast("Respostas baixadas.");
+}
+function exportQuestions(){
+  download("perguntas_diagnostico.json", JSON.stringify(DIAG,null,2), "application/json");
+  toast("Perguntas baixadas.");
+}
+function openReport(){
+  const rep = buildReportHTML();
+  const w = window.open("", "_blank");
+  w.document.open(); w.document.write(rep); w.document.close();
+}
+function buildReportHTML(){
+  const cad = state.cadastro||{};
+  const logoCliente = cad.logo_cliente_url ? `<img src="${escapeHtml(cad.logo_cliente_url)}" style="height:52px;object-fit:contain" />` : `<div style="color:#6b7280;font-size:12px">Logo do cliente (opcional)</div>`;
+  const all = Object.values(state.answers||{}).filter(a=>a.answerKey);
+  const toScore = (k)=> DIAG.scale.find(s=>s.key===k)?.score ?? 0;
+  const maturity = all.length ? Math.round(all.reduce((a,q)=>a+toScore(q.answerKey),0)/all.length) : 0;
+
+  const worst = [...all].sort((a,b)=>toScore(a.answerKey)-toScore(b.answerKey)).slice(0,5);
+  const best  = [...all].sort((a,b)=>toScore(b.answerKey)-toScore(a.answerKey)).slice(0,5);
+
+  return `
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"/>
+<title>Relatório — Diagnóstico</title>
+<style>
+  body{font-family:ui-sans-serif,system-ui;margin:28px;color:#111}
+  .hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5e7eb;padding-bottom:14px;margin-bottom:16px}
+  h1{font-size:20px;margin:0}
+  .sub{color:#374151;margin-top:6px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{border:1px solid #e5e7eb;border-radius:14px;padding:14px}
+  .muted{color:#374151}
+  table{width:100%;border-collapse:collapse}
+  th,td{border-bottom:1px solid #f1f5f9;padding:8px;text-align:left;font-size:13px;vertical-align:top}
+  th{color:#374151;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+  .kpi{font-weight:900}
+</style></head><body>
+<div class="hdr">
+  <div style="display:flex;gap:14px;align-items:center">
+    <img src="${DIAG.brand.logoUrl}" style="height:22px;object-fit:contain" />
+    <div>
+      <h1>Relatório — Diagnóstico Empresarial</h1>
+      <div class="sub">${escapeHtml(cad.empresa_nome||"Empresa")} • ${escapeHtml(cad.segmento||"")} • ${escapeHtml(cad.cidade_uf||"")}</div>
+    </div>
+  </div>
+  <div style="text-align:right">
+    ${logoCliente}
+    <div class="muted" style="font-size:12px;margin-top:6px">Maturidade geral: <span class="kpi">${maturity?maturity+"%":"—"}</span></div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="muted">Resumo executivo</div>
+    <div style="white-space:pre-wrap;line-height:1.5;margin-top:8px">${escapeHtml(state.insights.text || "Gere insights para preencher automaticamente esta seção.")}</div>
+  </div>
+  <div class="card">
+    <div class="muted">Top 5 gaps</div>
+    <table><thead><tr><th>Pergunta</th><th>Nível</th><th>Imp.</th></tr></thead><tbody>
+      ${worst.map(w=>`<tr><td>${escapeHtml(w.text)}</td><td>${escapeHtml(w.answerKey)}</td><td>${escapeHtml(w.importance||"")}</td></tr>`).join("")}
+    </tbody></table>
+    <div style="height:10px"></div>
+    <div class="muted">Top 5 pontos fortes</div>
+    <table><thead><tr><th>Pergunta</th><th>Nível</th><th>Imp.</th></tr></thead><tbody>
+      ${best.map(b=>`<tr><td>${escapeHtml(b.text)}</td><td>${escapeHtml(b.answerKey)}</td><td>${escapeHtml(b.importance||"")}</td></tr>`).join("")}
+    </tbody></table>
+  </div>
+</div>
+
+<div style="margin-top:16px" class="card">
+  <div class="muted">Oportunidades</div>
+  ${state.opportunities.length ? `
+    <table><thead><tr><th>Título</th><th>Área</th><th>Impacto</th><th>Esforço</th><th>Urgência</th></tr></thead><tbody>
+      ${state.opportunities.map(o=>`<tr><td>${escapeHtml(o.title||"")}</td><td>${escapeHtml(o.area||"")}</td><td>${escapeHtml(o.impact||"")}</td><td>${escapeHtml(o.effort||"")}</td><td>${escapeHtml(o.urgency||"")}</td></tr>`).join("")}
+    </tbody></table>` : `<div style="margin-top:8px" class="muted">Nenhuma oportunidade cadastrada.</div>`}
+</div>
+
+<div style="margin-top:16px" class="card">
+  <div class="muted">Plano de Ação</div>
+  ${state.actions.length ? `
+    <table><thead><tr><th>Ação</th><th>Responsável</th><th>Prazo</th><th>Custo</th><th>Ligação</th></tr></thead><tbody>
+      ${state.actions.map(a=>`<tr><td>${escapeHtml(a.action||"")}</td><td>${escapeHtml(a.owner||"")}</td><td>${escapeHtml(a.due||"")}</td><td>${escapeHtml(a.cost||"")}</td><td>${escapeHtml(a.relatedOpportunityTitle||"")}</td></tr>`).join("")}
+    </tbody></table>` : `<div style="margin-top:8px" class="muted">Nenhuma ação cadastrada.</div>`}
+</div>
+
+<div class="muted" style="font-size:12px;margin-top:16px">Impressão: Ctrl+P / Salvar como PDF.</div>
+</body></html>`;
+}
+
+function exportQuestionsFile(){ exportQuestions(); }
+function importQuestionsFile(){}
+
+function download(filename, content, mime){
+  const blob = new Blob([content], {type:mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function el(html){
+  const d = document.createElement("div");
+  d.innerHTML = html.trim();
+  return d.firstChild;
+}
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2200);
+}
+function escapeHtml(s){
+  return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+function escapeJs(s){
+  return String(s||"").replaceAll("\\","\\\\").replaceAll("'","\\'");
+}
+
+/** init */
+buildNav();
+render();
+</script>
 </body>
 </html>
