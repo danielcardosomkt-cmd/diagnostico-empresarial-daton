@@ -339,7 +339,15 @@ function loadConfig(){
     const raw = localStorage.getItem(STORAGE_KEYS.CONFIG);
     if(raw) return JSON.parse(raw);
   }catch{}
-  return { provider:"openai", privacy:true, openaiKey:"", geminiKey:"", backendEndpoint:"" };
+  return {
+  provider: "openai",
+  privacy: true,
+  openaiKey: "",
+  geminiKey: "",
+  geminiModel: "gemini-2.5-flash",
+  backendEndpoint: ""
+};
+
 }
 function saveConfig(){ localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(state.ai)); }
 
@@ -1276,6 +1284,7 @@ render();
 </script>
 </body>
 </html>
+
 
 
 
