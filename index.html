@@ -347,14 +347,20 @@ function loadConfig(){
 function saveConfig(){ localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(state.ai)); }
 async function listGeminiModels(){
   try{
-    const cfg = loadConfig();
-    const apiKey = (cfg.geminiKey || "").trim();
+    // pega config mais recente do localStorage
+    state.ai = loadConfig();
 
+    const apiKey = (state.ai.geminiKey || "").trim();
     if(!apiKey){
       toast("Cole sua Gemini API Key em “Configurar IA” primeiro.");
       return;
     }
 
+    toast("Buscando modelos do Gemini...");
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
+    const res = await fetch(url);
+    const data = await res.json().catch(()=> ({}));
 
     if(!res.ok){
       const msg = data?.error?.message || `Erro HTTP ${res.status}`;
@@ -367,17 +373,20 @@ async function listGeminiModels(){
       .filter(Boolean)
       .map(n => n.replace(/^models\//, ""));
 
+    if(!cleaned.length){
+      alert("Nenhum modelo retornado para essa chave.");
+      return;
+    }
+
     alert(
       "Modelos Gemini disponíveis (copie e cole no campo “Modelo Gemini”):\n\n" +
-      (cleaned.length ? cleaned.join("\n") : "(nenhum modelo retornado)")
+      cleaned.join("\n")
     );
   }catch(err){
     alert("Falha ao listar modelos Gemini:\n" + (err?.message || err));
   }
 }
 
-
-   
 function persistAll(){ saveQuestions(); saveAnswers(); saveConfig(); }
 
 /** =========================
@@ -938,7 +947,11 @@ function openConfig(){
       return;
     }
 
-   
+    toast("Buscando modelos do Gemini...");
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
+    const res = await fetch(url);
+    const data = await res.json().catch(()=> ({}));
 
     if(!res.ok){
       const msg = data?.error?.message || `Erro HTTP ${res.status}`;
@@ -966,6 +979,12 @@ function openConfig(){
 }
 
 
+    toast("Buscando modelos do Gemini...");
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
+    const res = await fetch(url);
+
+    const data = await res.json().catch(()=> ({}));
 
     if(!res.ok){
       const msg = data?.error?.message || `Erro HTTP ${res.status}`;
@@ -1380,10 +1399,6 @@ render();
 </script>
 </body>
 </html>
-
-
-
-
 
 
 
