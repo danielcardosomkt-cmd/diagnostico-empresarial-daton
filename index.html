@@ -126,7 +126,8 @@
         <button class="btn" onclick="openConfig()">Configurar IA</button>
         <button class="btn primary" onclick="generateInsights()">Gerar insights</button>
         <button class="btn" onclick="listGeminiModels()">Listar Modelos Gemini</button>
-
+<button class="btn" onclick="openConfig()">Configurar IA</button>
+<button class="btn primary" onclick="generateInsights()">Gerar insights</button>
 
       </div>
     </div>
@@ -345,73 +346,6 @@ function loadConfig(){
   return { provider:"openai", privacy:true, openaiKey:"", geminiKey:"", geminiModel:"gemini-1.5-pro", backendEndpoint:"" };
 }
 function saveConfig(){ localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(state.ai)); }
-async function listGeminiModels(){
-  try{
-    const cfg = loadConfig();
-    const apiKey = (cfg.geminiKey || "").trim();
-
-    if(!apiKey){
-      toast("Cole sua Gemini API Key em “Configurar IA” primeiro.");
-      return;
-    }
-
-    toast("Buscando modelos do Gemini...");
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
-    const res = await fetch(url);
-    const data = await res.json().catch(()=> ({}));
-
-    if(!res.ok){
-      const msg = data?.error?.message || `Erro HTTP ${res.status}`;
-      alert("Erro ao listar modelos Gemini:\n" + msg);
-      return;
-    }
-
-    const cleaned = (data.models || [])
-      .map(m => m.name)
-      .filter(Boolean)
-      .map(n => n.replace(/^models\//, ""));
-
-    alert(
-      "Modelos Gemini disponíveis (copie e cole no campo “Modelo Gemini”):\n\n" +
-      (cleaned.length ? cleaned.join("\n") : "(nenhum modelo retornado)")
-    );
-  }catch(err){
-    alert("Falha ao listar modelos Gemini:\n" + (err?.message || err));
-  }
-}
-
-
-    toast("Buscando modelos do Gemini...");
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
-    const res = await fetch(url);
-    const data = await res.json().catch(()=> ({}));
-
-    if(!res.ok){
-      const msg = data?.error?.message || `Erro HTTP ${res.status}`;
-      alert("Erro ao listar modelos Gemini:\n" + msg);
-      return;
-    }
-
-    const cleaned = (data.models || [])
-      .map(m => m.name)
-      .filter(Boolean)
-      .map(n => n.replace(/^models\//, ""));
-
-    if(!cleaned.length){
-      alert("Nenhum modelo retornado para essa chave.");
-      return;
-    }
-
-    alert(
-      "Modelos Gemini disponíveis (copie e cole no campo “Modelo Gemini”):\n\n" +
-      cleaned.join("\n")
-    );
-  }catch(err){
-    alert("Falha ao listar modelos Gemini:\n" + (err?.message || err));
-  }
-}
 
 function persistAll(){ saveQuestions(); saveAnswers(); saveConfig(); }
 
@@ -964,7 +898,7 @@ document.getElementById("privacyMode").addEventListener("change",(e)=>{
 function openConfig(){
   async function listGeminiModels(){
   try{
-    // garante config mais recente (localStorage -> state)
+    // garante que estamos usando a config mais recente
     state.ai = loadConfig();
 
     const apiKey = (state.ai.geminiKey || "").trim();
@@ -972,38 +906,6 @@ function openConfig(){
       toast("Cole sua Gemini API Key em “Configurar IA” primeiro.");
       return;
     }
-
-    toast("Buscando modelos do Gemini...");
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
-    const res = await fetch(url);
-    const data = await res.json().catch(()=> ({}));
-
-    if(!res.ok){
-      const msg = data?.error?.message || `Erro HTTP ${res.status}`;
-      alert("Erro ao listar modelos Gemini:\n" + msg);
-      return;
-    }
-
-    const cleaned = (data.models || [])
-      .map(m => m.name)
-      .filter(Boolean)
-      .map(n => n.replace(/^models\//, ""));
-
-    if(!cleaned.length){
-      alert("Nenhum modelo retornado para essa chave.");
-      return;
-    }
-
-    alert(
-      "Modelos Gemini disponíveis (copie e cole no campo “Modelo Gemini”):\n\n" +
-      cleaned.join("\n")
-    );
-  }catch(err){
-    alert("Falha ao listar modelos Gemini:\n" + (err?.message || err));
-  }
-}
-
 
     toast("Buscando modelos do Gemini...");
 
@@ -1425,9 +1327,6 @@ render();
 </script>
 </body>
 </html>
-
-
-
 
 
 
