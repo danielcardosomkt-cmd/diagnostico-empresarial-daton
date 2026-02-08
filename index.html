@@ -382,37 +382,7 @@ async function listGeminiModels(){
 }
 
 
-    toast("Buscando modelos do Gemini...");
-
-    const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`;
-    const res = await fetch(url);
-    const data = await res.json().catch(()=> ({}));
-
-    if(!res.ok){
-      const msg = data?.error?.message || `Erro HTTP ${res.status}`;
-      alert("Erro ao listar modelos Gemini:\n" + msg);
-      return;
-    }
-
-    const cleaned = (data.models || [])
-      .map(m => m.name)
-      .filter(Boolean)
-      .map(n => n.replace(/^models\//, ""));
-
-    if(!cleaned.length){
-      alert("Nenhum modelo retornado para essa chave.");
-      return;
-    }
-
-    alert(
-      "Modelos Gemini disponíveis (copie e cole no campo “Modelo Gemini”):\n\n" +
-      cleaned.join("\n")
-    );
-  }catch(err){
-    alert("Falha ao listar modelos Gemini:\n" + (err?.message || err));
-  }
-}
-
+   
 function persistAll(){ saveQuestions(); saveAnswers(); saveConfig(); }
 
 /** =========================
@@ -1425,6 +1395,7 @@ render();
 </script>
 </body>
 </html>
+
 
 
 
