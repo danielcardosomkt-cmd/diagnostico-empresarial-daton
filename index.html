@@ -899,9 +899,23 @@ document.getElementById("privacyMode").addEventListener("change",(e)=>{
   toast("Privacidade "+(state.ai.privacy?"ON":"OFF"));
 });
 
-function openConfig(){
+function openConfig() {
   // garante config mais recente antes de editar
   state.ai = loadConfig();
+
+  // ====== CONFIG GEMINI (salvar chave e modelo) ======
+  const gemKey = prompt("Cole sua Gemini API Key:", state.ai.geminiKey || "");
+  if (gemKey !== null) state.ai.geminiKey = (gemKey || "").trim();
+
+  const gemModel = prompt("Modelo Gemini (ex: gemini-2.5-flash):", state.ai.geminiModel || "gemini-2.5-flash");
+  if (gemModel !== null) state.ai.geminiModel = (gemModel || "").trim();
+
+  // ... seu código do OpenAI continua aqui ...
+
+  saveConfig();
+  toast("Configuração Gemini salva.");
+}
+
 
   const openaiKey = prompt("Cole sua OpenAI API Key (vazio mantém atual):", "");
   if(openaiKey !== null && openaiKey.trim()) state.ai.openaiKey = openaiKey.trim();
