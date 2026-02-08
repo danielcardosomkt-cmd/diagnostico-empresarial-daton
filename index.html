@@ -339,15 +339,7 @@ function loadConfig(){
     const raw = localStorage.getItem(STORAGE_KEYS.CONFIG);
     if(raw) return JSON.parse(raw);
   }catch{}
-  return {
-  provider: "openai",
-  privacy: true,
-  openaiKey: "",
-  geminiKey: "",
-  geminiModel: "gemini-2.5-flash",
-  backendEndpoint: ""
-};
-
+  return { provider:"openai", privacy:true, openaiKey:"", geminiKey:"", backendEndpoint:"" };
 }
 function saveConfig(){ localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(state.ai)); }
 
@@ -899,41 +891,19 @@ document.getElementById("privacyMode").addEventListener("change",(e)=>{
   toast("Privacidade "+(state.ai.privacy?"ON":"OFF"));
 });
 
-function openConfig() {
-  // garante config mais recente antes de editar
-  state.ai = loadConfig();
-
-  // ====== CONFIG GEMINI (salvar chave e modelo) ======
-  const gemKey = prompt("Cole sua Gemini API Key:", state.ai.geminiKey || "");
-  if (gemKey !== null) state.ai.geminiKey = (gemKey || "").trim();
-
-  const gemModel = prompt("Modelo Gemini (ex: gemini-2.5-flash):", state.ai.geminiModel || "gemini-2.5-flash");
-  if (gemModel !== null) state.ai.geminiModel = (gemModel || "").trim();
-
-  // ... seu código do OpenAI continua aqui ...
-
-  saveConfig();
-  toast("Configuração Gemini salva.");
-}
-
-
+function openConfig(){
   const openaiKey = prompt("Cole sua OpenAI API Key (vazio mantém atual):", "");
   if(openaiKey !== null && openaiKey.trim()) state.ai.openaiKey = openaiKey.trim();
 
   const geminiKey = prompt("Cole sua Gemini API Key (vazio mantém atual):", "");
   if(geminiKey !== null && geminiKey.trim()) state.ai.geminiKey = geminiKey.trim();
 
-  const endpoint = prompt(
-    "Endpoint backend (recomendado em produção). Vazio = DEV no browser:",
-    state.ai.backendEndpoint || ""
-  );
+  const endpoint = prompt("Endpoint backend (recomendado em produção). Vazio = DEV no browser:", state.ai.backendEndpoint || "");
   if(endpoint !== null) state.ai.backendEndpoint = endpoint.trim();
 
   saveConfig();
-  state.ai = loadConfig();
   toast("Config IA salva.");
 }
-
 
 /** =========================
  *  IA payload + calls
@@ -1005,17 +975,9 @@ Deficiências: ${(q.deficiencies||[]).join(", ")||"—"}
 Obs atual: ${q.notes||"—"}
 `;
   try{
-   const result = await callAI({ task:"note", prompt, payload:{ questionId } });
-
-const text = (typeof result === "string" ? result : (result?.text ?? result?.output ?? "")).toString().trim();
-
-if (!text) {
-  throw new Error("IA retornou vazio (sem texto).");
-}
-
-q.aiNotes = text;
-if (!q.notes) q.notes = text;
-
+    const result = await callAI({task:"note", prompt, payload:{questionId}});
+    q.aiNotes = String(result).trim();
+    if(!q.notes) q.notes = q.aiNotes;
     saveAnswers();
     render();
     toast("Observação sugerida.");
@@ -1052,40 +1014,25 @@ function resetAll(){
   go("cadastro");
 }
 
-async function callAI({ task, prompt, payload }) {
-  // SEMPRE sincroniza com localStorage antes de chamar IA
-  state.ai = loadConfig();
-
-  if (state.ai.backendEndpoint) {
+async function callAI({task, prompt, payload}){
+  if(state.ai.backendEndpoint){
     const res = await fetch(state.ai.backendEndpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ provider: state.ai.provider, task, prompt, payload })
+      method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({provider: state.ai.provider, task, prompt, payload})
     });
-    if (!res.ok) throw new Error("Backend error " + res.status);
+    if(!res.ok) throw new Error("Backend error "+res.status);
     const data = await res.json();
     return data.text ?? data.output ?? data;
   }
-
   // DEV (no browser)
-  if (state.ai.provider === "openai") {
-    if (!state.ai.openaiKey) throw new Error("OpenAI key não configurada.");
+  if(state.ai.provider==="openai"){
+    if(!state.ai.openaiKey) throw new Error("OpenAI key não configurada.");
     return await callOpenAI(prompt);
+  } else {
+    if(!state.ai.geminiKey) throw new Error("Gemini key não configurada.");
+    return await callGemini(prompt);
   }
-
-  if (state.ai.provider === "gemini") {
-    const apiKey = (state.ai.geminiKey || "").trim();
-    if (!apiKey) throw new Error("Gemini key não configurada.");
-    return await callGemini({
-  prompt,
-  apiKey: state.ai.geminiKey,
-  model: state.ai.geminiModel
-});
-  }
-
-  throw new Error("Provider inválido: " + state.ai.provider);
 }
-
 
 async function callOpenAI(prompt){
   const res = await fetch("https://api.openai.com/v1/chat/completions",{
@@ -1103,56 +1050,17 @@ async function callOpenAI(prompt){
   const data = await res.json();
   return data.choices?.[0]?.message?.content || "";
 }
-async function callGemini({ prompt, apiKey, model }) {
-  model = model || state.ai.geminiModel;
-  if(!model) throw new Error("Gemini: Modelo não configurado. Configure um modelo válido.");
- {
-    throw new Error("Gemini: API key não configurada.");
-  }
 
-  const url =
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=` +
-    encodeURIComponent(apiKey.trim());
-
-  const body = {
-    contents: [
-      { role: "user", parts: [{ text: prompt }] }
-    ],
-    generationConfig: {
-      temperature: 0.4,
-      maxOutputTokens: 2000
-    }
-  };
-
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
+async function callGemini(prompt){
+  const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="+encodeURIComponent(state.ai.geminiKey);
+  const res = await fetch(url,{
+    method:"POST", headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ contents:[{role:"user",parts:[{text:prompt}]}], generationConfig:{temperature:0.3} })
   });
-
-  const raw = await res.text();
-  let data;
-  try { data = JSON.parse(raw); } catch { data = { raw }; }
-
-  if (!res.ok) {
-    const msg = data?.error?.message || raw || `HTTP ${res.status}`;
-    throw new Error(`Gemini error ${res.status}: ${msg}`);
-  }
-
- const out =
-  data?.candidates?.[0]?.content?.parts
-    ?.map(p => p?.text)
-    ?.filter(Boolean)
-    ?.join("") 
-  || data?.candidates?.[0]?.content?.text
-  || data?.text
-  || "";
-
-  if (!out) throw new Error("Gemini: resposta vazia.");
-  return out;
+  if(!res.ok) throw new Error("Gemini error "+res.status);
+  const data = await res.json();
+  return data.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("") || "";
 }
-
-
 
 function safeParseStructured(text){
   const raw = String(text||"");
@@ -1298,10 +1206,3 @@ render();
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
